@@ -16,7 +16,7 @@
 	<version>1.0.0</version>
 	<name>spring-crud-with-simplejdbcmapper</name>
 	<description>
-      Building CRUD applications with Spring and SimpleJdbcMapper
+      Building a CRUD application with Spring and SimpleJdbcMapper
     </description>
 	<packaging>jar</packaging>
 
