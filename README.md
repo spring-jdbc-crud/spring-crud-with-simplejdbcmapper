@@ -20,7 +20,7 @@ mvnw.cmd spring-boot:run
 ```
 
 
-The example code for this demo is in class [DemoService.java](src/main/java/io/github/springcrudsimplejdbcmapper/core/DemoService.java).
+The code for CRUD is in class [DemoService.java](src/main/java/io/github/springcrudsimplejdbcmapper/core/DemoService.java).
 
 The model [Product.java](src/main/java/io/github/springcrudsimplejdbcmapper/core/Product.java).
 
