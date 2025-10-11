@@ -18,7 +18,8 @@ public class DemoService {
 	@Autowired
 	private SimpleJdbcMapper sjm;
 
-	public void runCrud() {
+	public void crudDemo() {
+
 		Product p = new Product();
 		p.setName("Shoes");
 		p.setSku("sku-1");

@@ -15,6 +15,6 @@ public class DemoCommandLineRunner implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		demoService.runCrud();
+		demoService.crudDemo();
 	}
 }
