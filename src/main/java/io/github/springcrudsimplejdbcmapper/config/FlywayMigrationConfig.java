@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 /**
- * This creates a new database tables each time the application runs.
+ * This creates new database table each time the application runs.
  */
 
 @Component
