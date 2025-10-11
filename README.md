@@ -1,12 +1,10 @@
 # Building a CRUD application with Spring and SimpleJdbcMapper
 This is a demo application on how to use SimpleJdbcMapper with Spring. SimpleJdbMapper is a wrapper around Spring JDBC libraries that makes database CRUD operations less verbose.
 
-No configuration is needed to run the demo application since it goes against an embedded h2 database.
-
 Note that the demo requires **java21+**.
 
 Get the source code by cloning the repository or using the 'Download ZIP' option by clicking on the 'code' dropdown button on this screen.
-Once you have the source code, use following commands to install and run the application. The 'install' step could take some time because maven may have to download a bunch of files.
+Once you have the source code, use following commands to install and run the application. The 'install' step could take some time because maven may have to download a bunch of files. No configuration is needed to run the demo application since it goes against an embedded h2 database.
 
 When you run the application you should see all the SQL being issued on the console.
 
