@@ -5,9 +5,6 @@ import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
-/**
- * Reset the database before every test run
- */
 @Component
 public class FlywayMigrationConfig {
 

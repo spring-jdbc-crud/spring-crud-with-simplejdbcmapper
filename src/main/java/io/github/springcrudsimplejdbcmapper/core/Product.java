@@ -1,4 +1,4 @@
-package io.github.springcrudsimplejdbcmapper.model;
+package io.github.springcrudsimplejdbcmapper.core;
 
 import io.github.simplejdbcmapper.annotation.Column;
 import io.github.simplejdbcmapper.annotation.Id;

@@ -1,4 +1,4 @@
-package io.github.springcrudsimplejdbcmapper.test;
+package io.github.springcrudsimplejdbcmapper.core;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -6,25 +6,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.stereotype.Service;
 
 import io.github.simplejdbcmapper.core.SimpleJdbcMapper;
-import io.github.springcrudsimplejdbcmapper.model.Product;
 
-@SpringBootTest
-@ExtendWith(SpringExtension.class)
-class TutorialTest {
+@Service
+public class DemoService {
 
 	@Autowired
 	private SimpleJdbcMapper sjm;
 
-	@Test
-	void tutorial_test() {
+	public void runCrud() {
 		Product p = new Product();
 		p.setName("Shoes");
 		p.setSku("sku-1");
@@ -65,14 +59,14 @@ class TutorialTest {
 
 		// Using Spring's JdbcClient api for sql above.
 		List<Product> productList = sjm.getJdbcClient().sql(sql).param("sku-1").query(Product.class).list();
-		assertTrue(productList.size() > 0);
+		assertTrue(!productList.isEmpty());
 		assertEquals("Shoes", productList.get(0).getName());
 		assertEquals("sku-1", productList.get(0).getSku());
 
 		// Using Spring's JdbcTemplate api for sql above
 		List<Product> productList2 = sjm.getJdbcTemplate().query(sql, BeanPropertyRowMapper.newInstance(Product.class),
 				"sku-1");
-		assertTrue(productList2.size() > 0);
+		assertTrue(!productList2.isEmpty());
 		assertEquals("Shoes", productList2.get(0).getName());
 		assertEquals("sku-1", productList2.get(0).getSku());
 

@@ -12,7 +12,7 @@
 	</parent>
 
 	<groupId>io.github.spring-jdbc-crud</groupId>
-	<artifactId>using-simplejdbcmapper-with-spring</artifactId>
+	<artifactId>spring-crud-with-simplejdbcmapper</artifactId>
 	<version>1.0.0</version>
 	<name>spring-crud-with-simplejdbcmapper</name>
 	<description>
@@ -50,29 +50,13 @@
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
 			<version>11.13.1</version>
-			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-			<scope>test</scope>
 		</dependency>
 
 	</dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<!-- Need this to prevent plugin from erroring out on 'No main class 
-						found' on repackaging -->
-					<skip>true</skip>
-					<classifier>test</classifier>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 </project>
