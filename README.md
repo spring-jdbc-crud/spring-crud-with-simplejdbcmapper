@@ -23,7 +23,7 @@ You will see all the SQL being issued on the console.
 
 
 
-The example code for this demo is in class [DemoService.java](src/main/java/io/github/springcrudsimplejdbcmapper/core/DemoServie.java).
+The example code for this demo is in class [DemoService.java](src/main/java/io/github/springcrudsimplejdbcmapper/core/DemoService.java).
 
 The model [Product.java](src/main/java/io/github/springcrudsimplejdbcmapper/core/Product.java).
 
