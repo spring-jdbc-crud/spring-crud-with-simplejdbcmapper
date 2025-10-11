@@ -3,7 +3,7 @@ This is a demo application on how to use SimpleJdbcMapper with Spring. SimpleJdb
 
 Use git to clone the repository and then run it with maven. No configuration is needed since application goes against an embedded h2 database.
 
-If you plan to run it, it requires **java21+** installed on your local.
+Note that the demo requires **java21+**.
 
 ```
 # clone the repository
@@ -23,7 +23,7 @@ You will see all the SQL being issued on the console.
 
 
 
-The example code for this demo is in class [TutorialTest.java](src/main/java/io/github/springcrudsimplejdbcmapper/core/DemoServie.java).
+The example code for this demo is in class [DemoService.java](src/main/java/io/github/springcrudsimplejdbcmapper/core/DemoServie.java).
 
 The model [Product.java](src/main/java/io/github/springcrudsimplejdbcmapper/core/Product.java).
 
