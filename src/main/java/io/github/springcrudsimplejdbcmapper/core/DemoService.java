@@ -54,7 +54,7 @@ public class DemoService {
 		assertEquals("New Description", p.getDescription());
 
 		// getBeanFriendlySqlColumns() creates a string for the sql columns with
-		// appropriate aliases. Note that in the Product model property 'name' is
+		// appropriate column aliases. Note that Product model property 'name' is
 		// mapped to 'product_name' column
 		String sql = "SELECT " + sjm.getBeanFriendlySqlColumns(Product.class) + " FROM product WHERE sku = ? ";
 
