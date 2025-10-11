@@ -5,6 +5,10 @@ import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
+/**
+ * This creates a new database tables each time the application runs.
+ */
+
 @Component
 public class FlywayMigrationConfig {
 
