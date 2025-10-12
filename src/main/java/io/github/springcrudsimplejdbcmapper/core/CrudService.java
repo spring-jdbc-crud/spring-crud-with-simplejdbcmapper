@@ -13,12 +13,12 @@ import org.springframework.stereotype.Service;
 import io.github.simplejdbcmapper.core.SimpleJdbcMapper;
 
 @Service
-public class DemoService {
+public class CrudService {
 
 	@Autowired
 	private SimpleJdbcMapper sjm;
 
-	public void crudDemo() {
+	public void crud() {
 
 		Product p = new Product();
 		p.setName("Shoes");

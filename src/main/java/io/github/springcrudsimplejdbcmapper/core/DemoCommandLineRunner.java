@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class DemoCommandLineRunner implements CommandLineRunner {
 	@Autowired
-	DemoService demoService;
+	CrudService crudService;
 
 	@Override
 	public void run(String... args) throws Exception {
-		demoService.crudDemo();
+		crudService.crud();
 	}
 }
