@@ -18,7 +18,7 @@ This step could take some time because the dependency files have to be downloade
 ./mvnw clean install  
 
 # For windows
-mvnw.cmd clean install # This step could take some time because the dependency files have to be downloaded
+mvnw.cmd clean install
 ```
 **3.Run the application**      
 When you run the application you should see all the SQL being issued on the console.
