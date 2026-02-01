@@ -7,10 +7,10 @@ Get the source code by cloning the repository or using the 'Download ZIP' option
 
 You can build and run the application with the following 3 steps. No other configuration is needed since applicationn goes against an embedded h2 database. When you run the application you should see all the SQL being issued on the console.
 
-**1 Get source code **     
+1. Get source code      
 Clone the repository or use the 'Download ZIP' option by clicking on the 'code' dropdown button on this screen.
 
-**2 Build the application **   
+2. Build the application    
 This step could take some time because the dependency files have to be downloaded
 
 ```
@@ -21,7 +21,7 @@ This step could take some time because the dependency files have to be downloade
 mvnw.cmd clean install # This step could take some time because the dependency files have to be downloaded
 
 ```
-**3 Run the application **     
+3. Run the application      
 When you run the application you should see all the SQL being issued on the console.
 
 ```
