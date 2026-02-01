@@ -19,7 +19,6 @@ This step could take some time because the dependency files have to be downloade
 
 # For windows
 mvnw.cmd clean install # This step could take some time because the dependency files have to be downloaded
-
 ```
 **3.Run the application**      
 When you run the application you should see all the SQL being issued on the console.
@@ -30,7 +29,6 @@ When you run the application you should see all the SQL being issued on the cons
 
 # For windows
 mvnw.cmd spring-boot:run
-
 ```
 
 The code for CRUD is in class [CrudService.java](src/main/java/io/github/springcrudsimplejdbcmapper/core/CrudService.java).
