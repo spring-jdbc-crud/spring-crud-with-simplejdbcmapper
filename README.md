@@ -1,9 +1,12 @@
 # Building a CRUD application with Spring and SimpleJdbcMapper
-This is a demo application on how to use SimpleJdbcMapper with Spring. SimpleJdbMapper is a wrapper around Spring JDBC libraries that makes database CRUD operations less verbose.
+This is a demo application on how to use SimpleJdbcMapper with Spring. SimpleJdbMapper is a wrapper around Spring JDBC libraries that makes database CRUD operations with JdbcTemplate/JdbcClient less verbose.
+
+[Dzone Article](https://dzone.com/articles/using-simplejdbcmapper-with-spring) | [SimpleJdbcMapper](https://github.com/spring-jdbc-crud/simplejdbcmapper)
+
+You can build and run the application with the following 3 steps. No other configuration is needed since the application goes against an embedded h2 database. When you run the application you should see all the SQL being issued on the console.
 
 Note that the demo requires **java21+**.
 
-You can build and run the application with the following 3 steps. No other configuration is needed since the application goes against an embedded h2 database. When you run the application you should see all the SQL being issued on the console.
 
 **1.Get source code**      
 Clone the repository or use the 'Download ZIP' option by clicking on the 'code' dropdown button on this screen.
@@ -35,6 +38,5 @@ The model [Product.java](src/main/java/io/github/springcrudsimplejdbcmapper/core
 
 The configuration is in class [SimpleJdbcMapperConfig.java](src/main/java/io/github/springcrudsimplejdbcmapper/config/SimpleJdbcMapperConfig.java)
 
-Github project for [SimpleJdbcMapper](https://github.com/spring-jdbc-crud/simplejdbcmapper) library.
 
 
