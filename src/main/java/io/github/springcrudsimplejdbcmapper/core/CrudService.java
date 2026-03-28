@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class CrudService {
 		assertEquals(10.25, p.getCost());
 
 		List<Product> products = sjm.findAll(Product.class);
-		assertTrue(products.size() > 0);
+		assertTrue(!products.isEmpty());
 
 		p.setDescription("Shoe description");
 		// issues an update for the full object
@@ -58,7 +59,8 @@ public class CrudService {
 		// mapped to 'product_name' column
 		String sql = "SELECT " + sjm.getBeanFriendlySqlColumns(Product.class) + " FROM product WHERE sku = ? ";
 
-		// Using Spring's JdbcClient api for sql above.
+		// Using Spring's JdbcClient api for sql above. JdbcClient is using
+		// SimplePropertyRowMapper internally
 		List<Product> productList = sjm.getJdbcClient().sql(sql).param("sku-1").query(Product.class).list();
 		assertTrue(!productList.isEmpty());
 		assertEquals("Shoes", productList.get(0).getName());
@@ -70,6 +72,20 @@ public class CrudService {
 		assertTrue(!productList2.isEmpty());
 		assertEquals("Shoes", productList2.get(0).getName());
 		assertEquals("sku-1", productList2.get(0).getSku());
+
+		List<Product> productList3 = sjm.findByPropertyValue(Product.class, "sku", "sku-1");
+		assertEquals(1, productList3.size());
+
+		// insert 2nd product and do findByPropertyValues()
+		Product p2 = new Product();
+		p2.setName("Shoes2");
+		p2.setSku("sku-2");
+		p2.setCost(12.00);
+		sjm.insert(p2);
+
+		String[] skus = { "sku-1", "sku-2" };
+		List<Product> productList4 = sjm.findByPropertyValues(Product.class, "sku", Arrays.asList(skus));
+		assertEquals(2, productList4.size());
 
 	}
 }
