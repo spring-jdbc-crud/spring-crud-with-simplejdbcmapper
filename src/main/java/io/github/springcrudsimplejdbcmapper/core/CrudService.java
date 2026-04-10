@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Service;
 
 import io.github.simplejdbcmapper.core.SimpleJdbcMapper;
+import io.github.simplejdbcmapper.core.SortBy;
 
 @Service
 public class CrudService {
@@ -87,5 +88,9 @@ public class CrudService {
 		List<Product> productList4 = sjm.findByPropertyValues(Product.class, "sku", Arrays.asList(skus));
 		assertEquals(2, productList4.size());
 
+		// Using SortBy to generate the "ORDER BY" clause. Use it similarly with method
+		// signatures which have varargs SortBy
+		List<Product> productList5 = sjm.findAll(Product.class, new SortBy("cost", "DESC"), new SortBy("name"));
+		assertEquals(2, productList5.size());
 	}
 }
