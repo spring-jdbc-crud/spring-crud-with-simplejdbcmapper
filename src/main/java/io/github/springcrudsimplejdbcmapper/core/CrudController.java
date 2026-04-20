@@ -16,14 +16,16 @@ public class CrudController {
 
 	@GetMapping("/products")
 	List<Product> all() {
-		System.out.println("SimpleJdbcMapper classloader:" + SimpleJdbcMapper.class.getClassLoader());
 		System.out.println("Product classloader:" + Product.class.getClassLoader());
 		return sjm.findAll(Product.class);
 	}
 
 	@GetMapping("/products/{id}")
 	Product getProduct(@PathVariable Integer id) {
+		System.out.println("SimpleJdbcMapper classloader:" + sjm.getClass().getClassLoader());
 
-		return sjm.findById(Product.class, id);
+		Product p = sjm.findById(Product.class, id);
+		System.out.println("Product classloader:" + p.getClass().getClassLoader());
+		return p;
 	}
 }
