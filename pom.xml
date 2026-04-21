@@ -13,7 +13,7 @@
 
 	<groupId>io.github.spring-jdbc-crud</groupId>
 	<artifactId>spring-crud-with-simplejdbcmapper</artifactId>
-	<version>1.8.0</version>
+	<version>1.9.0</version>
 	<name>spring-crud-with-simplejdbcmapper</name>
 	<description>
       Building a CRUD application with Spring and SimpleJdbcMapper
@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>io.github.spring-jdbc-crud</groupId>
 			<artifactId>simplejdbcmapper</artifactId>
-			<version>2.1.3</version>
+			<version>2.1.4</version>
 		</dependency>
 
 		<dependency>
