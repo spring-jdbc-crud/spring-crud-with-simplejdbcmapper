@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import io.github.simplejdbcmapper.core.SimpleJdbcMapper;
-import jakarta.annotation.PreDestroy;
 
 @Component
 public class SimpleJdbcMapperConfig {
@@ -30,10 +29,5 @@ public class SimpleJdbcMapperConfig {
 		String reference = sjm.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(sjm));
 		System.out.println(reference);
 		return sjm;
-	}
-
-	@PreDestroy
-	public void clearMovieCache() {
-		System.out.println("in PREDESTROY");
 	}
 }
