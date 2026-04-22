@@ -56,8 +56,9 @@ public class CrudService {
 
 		/*
 		 * For custom queries use getEntitySqlColumns() to get the columns sql and use
-		 * it with EntityRowMapper (please refer to its javadocs). Note in this case the
-		 * 'name' property is mapped to the 'product_name' column.
+		 * it with EntityRowMapper (please refer to its javadocs. EntityRowMapper added
+		 * in v2.2.0). Note in this case the 'name' property is mapped to the
+		 * 'product_name' column.
 		 */
 		String sql = "SELECT " + sjm.getEntitySqlColumns(Product.class) + " FROM product WHERE sku = ? ";
 
