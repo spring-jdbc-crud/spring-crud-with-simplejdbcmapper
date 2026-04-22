@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Service;
 
 import io.github.simplejdbcmapper.core.SimpleJdbcMapper;
@@ -56,25 +55,22 @@ public class CrudService {
 		assertEquals("New Description", p.getDescription());
 
 		/*
-		 * For custom queries use getBeanFriendlySqlColumns() to get the columns sql. It
-		 * creates the appropriate column aliases when the column name does not match
-		 * the corresponding underscore case property name. This allows the usage of
-		 * Spring row mappers like BeanPropertyRowMapper, SimplePropertyRowMapper etc
-		 * instead of writing custom row mappers. Note in this case the 'name' property
-		 * is mapped to the 'product_name' column.
+		 * For custom queries use getEntitySqlColumns() to get the columns sql and use
+		 * it EntityRowMapper (please refer to its javadocs). Note in this case the
+		 * 'name' property is mapped to the 'product_name' column.
 		 */
-		String sql = "SELECT " + sjm.getBeanFriendlySqlColumns(Product.class) + " FROM product WHERE sku = ? ";
+		String sql = "SELECT " + sjm.getEntitySqlColumns(Product.class) + " FROM product WHERE sku = ? ";
 
-		// Using Spring's JdbcClient api for sql above. JdbcClient is using
-		// SimplePropertyRowMapper internally
-		List<Product> productList = sjm.getJdbcClient().sql(sql).param("sku-1").query(Product.class).list();
+		// Using Spring's JdbcClient api for sql above.
+		List<Product> productList = sjm.getJdbcClient().sql(sql).param("sku-1")
+				.query(sjm.newEntityRowMapper(Product.class)).list();
+
 		assertTrue(!productList.isEmpty());
 		assertEquals("Shoes", productList.get(0).getName());
 		assertEquals("sku-1", productList.get(0).getSku());
 
 		// Using Spring's JdbcTemplate api for sql above
-		List<Product> productList2 = sjm.getJdbcTemplate().query(sql, BeanPropertyRowMapper.newInstance(Product.class),
-				"sku-1");
+		List<Product> productList2 = sjm.getJdbcTemplate().query(sql, sjm.newEntityRowMapper(Product.class), "sku-1");
 		assertTrue(!productList2.isEmpty());
 		assertEquals("Shoes", productList2.get(0).getName());
 		assertEquals("sku-1", productList2.get(0).getSku());
