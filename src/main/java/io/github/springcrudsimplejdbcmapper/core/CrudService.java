@@ -104,5 +104,6 @@ public class CrudService {
 		// signatures which have varargs SortBy
 		List<Product> productList5 = sjm.findAll(Product.class, new SortBy("cost", "DESC"), new SortBy("name"));
 		assertEquals(2, productList5.size());
+
 	}
 }
