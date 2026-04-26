@@ -79,9 +79,8 @@ public class CrudService {
 		assertEquals("Shoes", productList2.get(0).getName());
 		assertEquals("sku-1", productList2.get(0).getSku());
 
-		String sql2 = "SELECT " + sjm.getEntityRowMapperSqlColumns(Product.class) + " FROM product WHERE sku = ? ";
+		String sql2 = "SELECT " + sjm.getEntitySqlColumns(Product.class) + " FROM product WHERE sku = ? ";
 
-		System.out.println("XXXXXXXX");
 		List<Product> list1 = sjm.getJdbcTemplate().query(sql2, sjm.newEntityRowMapper(Product.class), "sku-1");
 		assertTrue(!list1.isEmpty());
 		assertEquals("Shoes", list1.get(0).getName());
