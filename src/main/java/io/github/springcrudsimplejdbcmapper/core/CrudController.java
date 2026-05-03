@@ -14,18 +14,38 @@ public class CrudController {
 	@Autowired
 	SimpleJdbcMapper sjm;
 
+	@Autowired
+	CrudService crudService;
+
+	@GetMapping("/tomany")
+	List<Order> toMany() {
+		return crudService.toManyRelationship();
+	}
+
+	@GetMapping("/tomany-through")
+	List<Employee> toManyThrough() {
+		return crudService.toManyThrough();
+	}
+
+	@GetMapping("/multiple-relationships")
+	List<Order> multipleRelationships() {
+		return crudService.multipleRelationshipsWithSingleQuery();
+	}
+
+	@GetMapping("/mixandmatch")
+	List<Order> mixandmatch() {
+		return crudService.mixAndMatchRelationshipFromMultipleQueries();
+	}
+
 	@GetMapping("/products")
 	List<Product> all() {
-		System.out.println("Product classloader:" + Product.class.getClassLoader());
 		return sjm.findAll(Product.class);
 	}
 
 	@GetMapping("/products/{id}")
 	Product getProduct(@PathVariable Integer id) {
-		System.out.println("SimpleJdbcMapper classloader:" + sjm.getClass().getClassLoader());
-
 		Product p = sjm.findById(Product.class, id);
-		System.out.println("Product classloader:" + p.getClass().getClassLoader());
 		return p;
 	}
+
 }

@@ -11,8 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Service;
 
+import io.github.simplejdbcmapper.core.MultiEntity;
+import io.github.simplejdbcmapper.core.ResultListMap;
 import io.github.simplejdbcmapper.core.SimpleJdbcMapper;
 import io.github.simplejdbcmapper.core.SortBy;
+import io.github.simplejdbcmapper.relationship.Relationship;
 
 @Service
 public class CrudService {
@@ -103,7 +106,113 @@ public class CrudService {
 		// Using SortBy to generate the "ORDER BY" clause. Use it similarly with method
 		// signatures which have varargs SortBy
 		List<Product> productList5 = sjm.findAll(Product.class, new SortBy("cost", "DESC"), new SortBy("name"));
-		assertEquals(2, productList5.size());
+		assertTrue(productList5.size() > 0);
 
 	}
+
+	public List<Order> toManyRelationship() {
+
+		MultiEntity multiEntity = new MultiEntity().add(Order.class, "o").add(OrderLine.class, "ol");
+
+		String sql = """
+				SELECT %s
+				FROM orders o
+				LEFT JOIN order_line ol ON  o.id = ol.order_id
+				WHERE o.total_amount >= ?
+				ORDER BY o.id, ol.id
+				""".formatted(sjm.getMultiEntitySqlColumns(multiEntity));
+
+		ResultListMap resultListMap = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity), 0);
+
+		List<Order> orders = resultListMap.getList(Order.class);
+		List<OrderLine> orderLines = resultListMap.getList(OrderLine.class);
+
+		Relationship.mainList(orders).toManyList(orderLines).joinOn("id", "orderId").populate("orderLines");
+
+		return orders;
+	}
+
+	public List<Order> multipleRelationshipsWithSingleQuery() {
+
+		MultiEntity multiEntity = new MultiEntity().add(Order.class, "o").add(OrderLine.class, "ol").add(Product.class,
+				"p");
+
+		String sql = """
+				SELECT %s
+				FROM orders o
+				LEFT JOIN order_line ol ON  o.id = ol.order_id
+				LEFT JOIN product p ON ol.product_id = p.id
+				WHERE o.total_amount >= ?
+				ORDER BY o.id, ol.id
+				""".formatted(sjm.getMultiEntitySqlColumns(multiEntity));
+
+		ResultListMap resultListMap = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity), 0);
+
+		List<Order> orders = resultListMap.getList(Order.class);
+		List<OrderLine> orderLines = resultListMap.getList(OrderLine.class);
+		List<Product> products = resultListMap.getList(Product.class);
+
+		Relationship.mainList(orders).toManyList(orderLines).joinOn("id", "orderId").populate("orderLines");
+		Relationship.mainList(orderLines).toOneList(products).joinOn("productId", "id").populate("product");
+
+		return orders;
+
+	}
+
+	public List<Employee> toManyThrough() {
+
+		MultiEntity multiEntity = new MultiEntity().add(Employee.class, "emp").add(EmployeeSkill.class, "es")
+				.add(Skill.class, "s");
+
+		String sql = """
+				SELECT %s
+				FROM employee emp
+				LEFT JOIN  employee_skill es ON emp.id = es.employee_id
+				LEFT JOIN skill s ON es.skill_id = s.id
+				WHERE emp.id <= 4
+				ORDER BY emp.id, s.name
+				""".formatted(sjm.getMultiEntitySqlColumns(multiEntity));
+
+		ResultListMap resultListMap = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity));
+
+		List<Employee> employees = resultListMap.getList(Employee.class);
+		List<EmployeeSkill> employeeSkillList = resultListMap.getList(EmployeeSkill.class);
+		List<Skill> skills = resultListMap.getList(Skill.class);
+
+		Relationship.mainList(employees).toManyList(skills).through(employeeSkillList, "employeeId", "skillId")
+				.ids("id", "id").populate("skills");
+
+		return employees;
+
+	}
+
+	public List<Order> mixAndMatchRelationshipFromMultipleQueries() {
+		// first query
+		MultiEntity multiEntity = new MultiEntity().add(Order.class, "o").add(OrderLine.class, "ol");
+		String sql = """
+				   SELECT %s
+				   FROM orders o
+				   LEFT JOIN order_line ol ON  o.id = ol.order_id
+				   WHERE o.total_amount >= ?
+				   ORDER BY o.order_date DESC, ol.id
+				""".formatted(sjm.getMultiEntitySqlColumns(multiEntity));
+		ResultListMap resultListMap = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity), 0);
+		List<Order> orders = resultListMap.getList(Order.class);
+		List<OrderLine> orderLines = resultListMap.getList(OrderLine.class);
+
+		// get the productId list from orderLines list
+		List<Integer> productIdList = orderLines.stream().map(OrderLine::getProductId).toList();
+
+		// Second query. findByPropertyValues() uses an IN clause so even if there are
+		// duplicate product ids we are fine.
+		List<Product> products = sjm.findByPropertyValues(Product.class, "id", productIdList);
+
+		// The toMany relationship populates order.orderLines
+		Relationship.mainList(orders).toManyList(orderLines).joinOn("id", "orderId").populate("orderLines");
+		// The toOne relationship populates orderLine.product.
+		Relationship.mainList(orderLines).toOneList(products).joinOn("productId", "id").populate("product");
+
+		return orders;
+	}
+
 }

@@ -5,22 +5,20 @@ import io.github.simplejdbcmapper.annotation.Id;
 import io.github.simplejdbcmapper.annotation.IdType;
 import io.github.simplejdbcmapper.annotation.Table;
 
-@Table(name = "product")
-public class Product {
+@Table(name = "skill")
+public class Skill {
 	@Id(type = IdType.AUTO_GENERATED)
 	private Integer id;
 
 	@Column
-	private String sku;
-
-	@Column(name = "product_name")
 	private String name;
 
-	@Column
-	private String description;
+	public Skill() {
+	}
 
-	@Column
-	private Double cost;
+	public Skill(String name) {
+		this.name = name;
+	}
 
 	public Integer getId() {
 		return id;
@@ -30,36 +28,12 @@ public class Product {
 		this.id = id;
 	}
 
-	public String getSku() {
-		return sku;
-	}
-
-	public void setSku(String sku) {
-		this.sku = sku;
-	}
-
 	public String getName() {
 		return name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public Double getCost() {
-		return cost;
-	}
-
-	public void setCost(Double cost) {
-		this.cost = cost;
 	}
 
 }
