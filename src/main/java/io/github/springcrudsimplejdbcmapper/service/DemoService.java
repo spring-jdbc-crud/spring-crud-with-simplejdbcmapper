@@ -34,6 +34,7 @@ public class DemoService {
 		logger.info("============================================================================================");
 		logger.info("======================= insert =============================================================");
 		logger.info("============================================================================================");
+
 		Product p = new Product();
 		p.setSku("sku-2001");
 		p.setCost(9.25);
@@ -53,6 +54,7 @@ public class DemoService {
 		logger.info("============================================================================================");
 		logger.info("======================= update                       =======================================");
 		logger.info("============================================================================================");
+
 		p.setDescription("some other candy");
 		// issues an update for the full object
 		sjm.update(p);
@@ -61,6 +63,7 @@ public class DemoService {
 		logger.info("============================================================================================");
 		logger.info("======================= updateSpecificProperties     =======================================");
 		logger.info("============================================================================================");
+
 		p.setCost(11.99);
 		// sql update will be issued only for cost field.
 		sjm.updateSpecificProperties(p, "cost");
@@ -69,6 +72,7 @@ public class DemoService {
 		logger.info("============================================================================================");
 		logger.info("======================= findAll with Sort            =======================================");
 		logger.info("============================================================================================");
+
 		// Using SortBy to generate the "ORDER BY" clause. Use it similarly with method
 		// signatures which have varargs SortBy
 		List<Product> products = sjm.findAll(Product.class, new SortBy("cost", "DESC"), new SortBy("name"));
@@ -79,22 +83,24 @@ public class DemoService {
 		logger.info("============================================================================================");
 		logger.info("======================= findByPropertyValue()        =======================================");
 		logger.info("============================================================================================");
+
 		List<Product> products = sjm.findByPropertyValue(Product.class, "sku", "sku#1001");
 		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(products));
 
 		logger.info("============================================================================================");
-		logger.info("======================= findByPropertyValues()        =======================================");
+		logger.info("======================= findByPropertyValues()        ======================================");
 		logger.info("============================================================================================");
+
 		String[] skus = { "sku#1001", "sku#1002" };
 		List<Product> list = sjm.findByPropertyValues(Product.class, "sku", Arrays.asList(skus));
 		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(list));
 	}
 
 	public void customQueriesForSingleEntity() {
-
 		logger.info("============================================================================================");
 		logger.info("======================= customQueriesForSingleEntity =======================================");
 		logger.info("============================================================================================");
+
 		/*
 		 * For custom queries use getEntitySqlColumns() to get the columns sql and use
 		 * it with EntityRowMapper (please refer to its javadocs. EntityRowMapper added
@@ -114,6 +120,7 @@ public class DemoService {
 		logger.info("============================================================================================");
 		logger.info("======================= toManyRelationship =================================================");
 		logger.info("============================================================================================");
+
 		MultiEntity multiEntity = new MultiEntity().add(Order.class, "o").add(OrderLine.class, "ol");
 
 		String sql = """
@@ -140,6 +147,7 @@ public class DemoService {
 		logger.info("============================================================================================");
 		logger.info("======================= multipleRelationshipsToOneToManyWithSingleQuery ====================");
 		logger.info("============================================================================================");
+
 		MultiEntity multiEntity = new MultiEntity().add(Order.class, "o").add(OrderLine.class, "ol").add(Product.class,
 				"p");
 
@@ -171,6 +179,7 @@ public class DemoService {
 		logger.info("============================================================================================");
 		logger.info("======================= toManyThroughAnIntermediateTable ===================================");
 		logger.info("============================================================================================");
+
 		MultiEntity multiEntity = new MultiEntity().add(Employee.class, "emp").add(EmployeeSkill.class, "es")
 				.add(Skill.class, "s");
 
@@ -201,6 +210,7 @@ public class DemoService {
 		logger.info("============================================================================================");
 		logger.info("======================= populatingRelationshipsFromMultipleQueries =========================");
 		logger.info("============================================================================================");
+
 		// first query
 		MultiEntity multiEntity = new MultiEntity().add(Order.class, "o").add(OrderLine.class, "ol");
 		String sql = """

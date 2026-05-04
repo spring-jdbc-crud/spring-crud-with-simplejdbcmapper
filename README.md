@@ -1,18 +1,17 @@
 # Building a CRUD application with Spring and SimpleJdbcMapper
-This is a demo application on how to use SimpleJdbcMapper with Spring. SimpleJdbMapper is a wrapper around Spring JDBC libraries that makes database CRUD operations with JdbcTemplate/JdbcClient less verbose.
+This is a demo application for [SimpleJdbcMapper](https://github.com/spring-jdbc-crud/simplejdbcmapper), a library that simplifies Spring JdbcTemplate/JdbcClient CRUD operations by making them less verbose 
 
-[Dzone Article](https://dzone.com/articles/using-simplejdbcmapper-with-spring) | [SimpleJdbcMapper](https://github.com/spring-jdbc-crud/simplejdbcmapper)
 
-You can build and run the application with the following 3 steps. No other configuration is needed since the application goes against an embedded h2 database. When you run the application you should see all the SQL being issued on the console.
+The application requires **java21+**.
 
-Note that the demo requires **java21+**.
+The application has an embedded h2 database populated with table data. No configuration is required.  When you run the application you should see all the SQL being issued on the console and the related objects printed out in JSON format.
 
 
 **1.Get source code**      
 Clone the repository or use the 'Download ZIP' option by clicking on the 'code' dropdown button on this screen.
 
 **2.Build the application**    
-This step could take some time because the dependency files have to be downloaded
+This will download the dependency files and then build the application.
 
 ```
 # For Unix/Mac 
@@ -22,7 +21,7 @@ This step could take some time because the dependency files have to be downloade
 mvnw.cmd clean install
 ```
 **3.Run the application**      
-When you run the application you should see all the SQL being issued on the console.
+When you run the application you should see all the SQL being issued on the console and the related objects printed out in JSON format.
 
 ```
 # For Unix/Mac 
@@ -32,9 +31,8 @@ When you run the application you should see all the SQL being issued on the cons
 mvnw.cmd spring-boot:run
 ```
 
-The code for CRUD is in class [CrudService.java](src/main/java/io/github/springcrudsimplejdbcmapper/core/CrudService.java).
+The example code is in class [DemoService.java](src/main/java/io/github/springcrudsimplejdbcmapper/service/DemoService.java).
 
-The model [Product.java](src/main/java/io/github/springcrudsimplejdbcmapper/core/Product.java).
 
 The configuration is in class [SimpleJdbcMapperConfig.java](src/main/java/io/github/springcrudsimplejdbcmapper/config/SimpleJdbcMapperConfig.java)
 
