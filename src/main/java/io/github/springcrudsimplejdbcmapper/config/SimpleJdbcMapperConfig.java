@@ -22,6 +22,12 @@ public class SimpleJdbcMapperConfig {
 	public SimpleJdbcMapper simpleJdbcMapper(DataSource dataSource) {
 		// This configuration is for H2 database.
 		// See SimpleJdbcMapper documentation for other database configurations.
-		return new SimpleJdbcMapper(dataSource);
+
+		SimpleJdbcMapper sjm = new SimpleJdbcMapper(dataSource);
+		System.out.println("SimpleJdbcMapper classloader:" + SimpleJdbcMapper.class.getClassLoader());
+
+		String reference = sjm.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(sjm));
+		System.out.println(reference);
+		return sjm;
 	}
 }

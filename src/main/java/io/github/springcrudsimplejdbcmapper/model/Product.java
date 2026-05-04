@@ -1,4 +1,4 @@
-package io.github.springcrudsimplejdbcmapper.core;
+package io.github.springcrudsimplejdbcmapper.model;
 
 import io.github.simplejdbcmapper.annotation.Column;
 import io.github.simplejdbcmapper.annotation.Id;
@@ -8,7 +8,7 @@ import io.github.simplejdbcmapper.annotation.Table;
 @Table(name = "product")
 public class Product {
 	@Id(type = IdType.AUTO_GENERATED)
-	private Integer Id;
+	private Integer id;
 
 	@Column
 	private String sku;
@@ -22,14 +22,12 @@ public class Product {
 	@Column
 	private Double cost;
 
-	private String nonDatabaseColumn;
-
 	public Integer getId() {
-		return Id;
+		return id;
 	}
 
 	public void setId(Integer id) {
-		Id = id;
+		this.id = id;
 	}
 
 	public String getSku() {
@@ -62,14 +60,6 @@ public class Product {
 
 	public void setCost(Double cost) {
 		this.cost = cost;
-	}
-
-	public String getNonDatabaseColumn() {
-		return nonDatabaseColumn;
-	}
-
-	public void setNonDatabaseColumn(String nonDatabaseColumn) {
-		this.nonDatabaseColumn = nonDatabaseColumn;
 	}
 
 }
