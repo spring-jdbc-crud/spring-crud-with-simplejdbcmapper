@@ -1,4 +1,4 @@
-package io.github.springcrudsimplejdbcmapper.core;
+package io.github.springcrudsimplejdbcmapper.controller;
 
 import java.util.List;
 
@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.github.simplejdbcmapper.core.SimpleJdbcMapper;
+import io.github.springcrudsimplejdbcmapper.model.Employee;
+import io.github.springcrudsimplejdbcmapper.model.Order;
+import io.github.springcrudsimplejdbcmapper.model.Product;
+import io.github.springcrudsimplejdbcmapper.service.DemoService;
 
 @RestController
 public class CrudController {
@@ -15,26 +19,26 @@ public class CrudController {
 	SimpleJdbcMapper sjm;
 
 	@Autowired
-	CrudService crudService;
+	DemoService demoService;
 
 	@GetMapping("/tomany")
 	List<Order> toMany() {
-		return crudService.toManyRelationship();
+		return demoService.toManyRelationship();
 	}
 
 	@GetMapping("/tomany-through")
 	List<Employee> toManyThrough() {
-		return crudService.toManyThrough();
+		return demoService.toManyThroughAnIntermediateTable();
 	}
 
 	@GetMapping("/multiple-relationships")
 	List<Order> multipleRelationships() {
-		return crudService.multipleRelationshipsWithSingleQuery();
+		return demoService.multipleRelationshipsToOneToManyWithSingleQuery();
 	}
 
 	@GetMapping("/mixandmatch")
 	List<Order> mixandmatch() {
-		return crudService.mixAndMatchRelationshipFromMultipleQueries();
+		return demoService.populatingRelationshipsFromMultipleQueries();
 	}
 
 	@GetMapping("/products")

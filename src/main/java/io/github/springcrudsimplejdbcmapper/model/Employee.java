@@ -1,4 +1,4 @@
-package io.github.springcrudsimplejdbcmapper.core;
+package io.github.springcrudsimplejdbcmapper.model;
 
 import java.util.ArrayList;
 import java.util.List;

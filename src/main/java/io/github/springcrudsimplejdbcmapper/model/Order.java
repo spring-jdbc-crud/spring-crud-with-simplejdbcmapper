@@ -1,4 +1,4 @@
-package io.github.springcrudsimplejdbcmapper.core;
+package io.github.springcrudsimplejdbcmapper.model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

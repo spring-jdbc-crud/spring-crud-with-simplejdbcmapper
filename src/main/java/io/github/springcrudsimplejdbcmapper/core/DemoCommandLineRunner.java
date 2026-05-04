@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import io.github.springcrudsimplejdbcmapper.service.DemoService;
+
 /**
  * Since it implements interface CommandLineRunner the 'run' method is executed
  * on Spring application startup
@@ -11,10 +13,23 @@ import org.springframework.stereotype.Component;
 @Component
 public class DemoCommandLineRunner implements CommandLineRunner {
 	@Autowired
-	CrudService crudService;
+	DemoService demoService;
 
 	@Override
 	public void run(String... args) throws Exception {
-		// crudService.crud();
+		demoService.crud();
+
+		demoService.findByProperty();
+
+		demoService.customQueriesForSingleEntity();
+
+		demoService.toManyRelationship();
+
+		demoService.multipleRelationshipsToOneToManyWithSingleQuery();
+
+		demoService.toManyThroughAnIntermediateTable();
+
+		demoService.populatingRelationshipsFromMultipleQueries();
+
 	}
 }
