@@ -9,10 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import io.github.simplejdbcmapper.core.MultiEntity;
-import io.github.simplejdbcmapper.core.ResultListMap;
 import io.github.simplejdbcmapper.core.SimpleJdbcMapper;
 import io.github.simplejdbcmapper.core.SortBy;
-import io.github.simplejdbcmapper.relationship.Relationship;
+import io.github.simplejdbcmapper.relationship.RelationshipMapper;
 import io.github.springcrudsimplejdbcmapper.model.Employee;
 import io.github.springcrudsimplejdbcmapper.model.EmployeeSkill;
 import io.github.springcrudsimplejdbcmapper.model.Order;
@@ -131,12 +130,11 @@ public class DemoService {
 				ORDER BY o.id, ol.id
 				""".formatted(sjm.getMultiEntitySqlColumns(multiEntity));
 
-		ResultListMap resultListMap = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity), 0);
+		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity),
+				0);
 
-		List<Order> orders = resultListMap.getList(Order.class);
-		List<OrderLine> orderLines = resultListMap.getList(OrderLine.class);
-
-		Relationship.mainList(orders).toManyList(orderLines).joinOn("id", "orderId").populate("orderLines");
+		List<Order> orders = relationshipMapper.type(Order.class).toMany(OrderLine.class).joinOn("id", "orderId")
+				.populate("orderLines").getList(Order.class);
 
 		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(orders));
 
@@ -160,14 +158,12 @@ public class DemoService {
 				ORDER BY o.id, ol.id
 				""".formatted(sjm.getMultiEntitySqlColumns(multiEntity));
 
-		ResultListMap resultListMap = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity), 0);
+		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity),
+				0);
 
-		List<Order> orders = resultListMap.getList(Order.class);
-		List<OrderLine> orderLines = resultListMap.getList(OrderLine.class);
-		List<Product> products = resultListMap.getList(Product.class);
-
-		Relationship.mainList(orders).toManyList(orderLines).joinOn("id", "orderId").populate("orderLines");
-		Relationship.mainList(orderLines).toOneList(products).joinOn("productId", "id").populate("product");
+		relationshipMapper.type(OrderLine.class).toOne(Product.class).joinOn("productId", "id").populate("product");
+		List<Order> orders = relationshipMapper.type(Order.class).toMany(OrderLine.class).joinOn("id", "orderId")
+				.populate("orderLines").getList(Order.class);
 
 		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(orders));
 
@@ -192,18 +188,14 @@ public class DemoService {
 				ORDER BY emp.id, s.name
 				""".formatted(sjm.getMultiEntitySqlColumns(multiEntity));
 
-		ResultListMap resultListMap = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity));
+		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity));
 
-		List<Employee> employees = resultListMap.getList(Employee.class);
-		List<EmployeeSkill> employeeSkillList = resultListMap.getList(EmployeeSkill.class);
-		List<Skill> skills = resultListMap.getList(Skill.class);
-
-		Relationship.mainList(employees).toManyList(skills).through(employeeSkillList, "employeeId", "skillId")
-				.ids("id", "id").populate("skills");
+		List<Employee> employees = relationshipMapper.type(Employee.class).toMany(Skill.class)
+				.through(EmployeeSkill.class, "employeeId", "skillId").populate("skills").getList(Employee.class);
 
 		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(employees));
-		return employees;
 
+		return employees;
 	}
 
 	public List<Order> populatingRelationshipsFromMultipleQueries() {
@@ -220,9 +212,11 @@ public class DemoService {
 				   WHERE o.total_amount >= ?
 				   ORDER BY o.order_date DESC, ol.id
 				""".formatted(sjm.getMultiEntitySqlColumns(multiEntity));
-		ResultListMap resultListMap = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity), 0);
-		List<Order> orders = resultListMap.getList(Order.class);
-		List<OrderLine> orderLines = resultListMap.getList(OrderLine.class);
+		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity),
+				0);
+
+		// the the orderLines so we can get its related productId
+		List<OrderLine> orderLines = relationshipMapper.getList(OrderLine.class);
 
 		// get the productId list from orderLines list
 		List<Integer> productIdList = orderLines.stream().map(OrderLine::getProductId).toList();
@@ -231,10 +225,15 @@ public class DemoService {
 		// duplicate product ids we are fine.
 		List<Product> products = sjm.findByPropertyValues(Product.class, "id", productIdList);
 
-		// The toMany relationship populates order.orderLines
-		Relationship.mainList(orders).toManyList(orderLines).joinOn("id", "orderId").populate("orderLines");
+		// add products to the relationship mapper
+		relationshipMapper.addEntityResult(Product.class, products, "id");
+
 		// The toOne relationship populates orderLine.product.
-		Relationship.mainList(orderLines).toOneList(products).joinOn("productId", "id").populate("product");
+		relationshipMapper.type(OrderLine.class).toOne(Product.class).joinOn("productId", "id").populate("product");
+
+		// The toMany relationship populates order.orderLines
+		List<Order> orders = relationshipMapper.type(Order.class).toMany(OrderLine.class).joinOn("id", "orderId")
+				.populate("orderLines").getList(Order.class);
 
 		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(orders));
 		return orders;
