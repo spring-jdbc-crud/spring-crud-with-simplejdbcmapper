@@ -24,12 +24,6 @@
 		<java.version>21</java.version>
 	</properties>
 
-	<developers>
-		<developer>
-			<name>Antony Joseph</name>
-		</developer>
-	</developers>
-	
 	<dependencies>
 		<dependency>
 			<groupId>io.github.spring-jdbc-crud</groupId>
