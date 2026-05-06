@@ -22,7 +22,6 @@ public class SimpleJdbcMapperConfig {
 	public SimpleJdbcMapper simpleJdbcMapper(DataSource dataSource) {
 		// This configuration is for H2 database.
 		// See SimpleJdbcMapper documentation for other database configurations.
-		SimpleJdbcMapper sjm = new SimpleJdbcMapper(dataSource);
-		return sjm;
+		return new SimpleJdbcMapper(dataSource);
 	}
 }

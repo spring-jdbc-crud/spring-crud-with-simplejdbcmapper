@@ -117,7 +117,7 @@ public class DemoService {
 
 	public List<Order> toManyRelationship() {
 		logger.info("============================================================================================");
-		logger.info("======================= Order toMany OrderLine  ============================================");
+		logger.info("======================= Relationshp: Order toMany OrderLine  ===============================");
 		logger.info("============================================================================================");
 
 		MultiEntity multiEntity = new MultiEntity().add(Order.class, "o").add(OrderLine.class, "ol");
@@ -176,7 +176,7 @@ public class DemoService {
 
 	public List<Employee> toManyThroughAnIntermediateTable() {
 		logger.info("============================================================================================");
-		logger.info("=== Employee toMany Skill through intermediate table employee_skill ========================");
+		logger.info("=== Relationship: Employee toMany Skill through intermediate table employee_skill ==========");
 		logger.info("============================================================================================");
 
 		MultiEntity multiEntity = new MultiEntity().add(Employee.class, "emp").add(EmployeeSkill.class, "es")
