@@ -60,7 +60,7 @@ public class DemoService {
 		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(p));
 
 		logger.info("============================================================================================");
-		logger.info("======================= updateSpecificProperties     =======================================");
+		logger.info("========updateSpecificProperties in this case 'cost' property only ==========================");
 		logger.info("============================================================================================");
 
 		p.setCost(11.99);
@@ -97,7 +97,7 @@ public class DemoService {
 
 	public void customQueriesForSingleEntity() {
 		logger.info("============================================================================================");
-		logger.info("======================= customQueriesForSingleEntity =======================================");
+		logger.info("=========== Custom query for a single entity         =======================================");
 		logger.info("============================================================================================");
 
 		/*
@@ -117,7 +117,7 @@ public class DemoService {
 
 	public List<Order> toManyRelationship() {
 		logger.info("============================================================================================");
-		logger.info("======================= toManyRelationship =================================================");
+		logger.info("======================= Order toMany OrderLine  ============================================");
 		logger.info("============================================================================================");
 
 		MultiEntity multiEntity = new MultiEntity().add(Order.class, "o").add(OrderLine.class, "ol");
@@ -142,9 +142,12 @@ public class DemoService {
 	}
 
 	public List<Order> multipleRelationshipsToOneToManyWithSingleQuery() {
-		logger.info("============================================================================================");
-		logger.info("======================= multipleRelationshipsToOneToManyWithSingleQuery ====================");
-		logger.info("============================================================================================");
+		logger.info(
+				"==============================================================================================================");
+		logger.info(
+				"=== Populating multiple relationships with a single query. Order toMany OrderLine, OrderLine toOne Product ===");
+		logger.info(
+				"==============================================================================================================");
 
 		MultiEntity multiEntity = new MultiEntity().add(Order.class, "o").add(OrderLine.class, "ol").add(Product.class,
 				"p");
@@ -173,7 +176,7 @@ public class DemoService {
 
 	public List<Employee> toManyThroughAnIntermediateTable() {
 		logger.info("============================================================================================");
-		logger.info("======================= toManyThroughAnIntermediateTable ===================================");
+		logger.info("=== Employee toMany Skill through intermediate table employee_skill ========================");
 		logger.info("============================================================================================");
 
 		MultiEntity multiEntity = new MultiEntity().add(Employee.class, "emp").add(EmployeeSkill.class, "es")
@@ -200,7 +203,7 @@ public class DemoService {
 
 	public List<Order> populatingRelationshipsFromMultipleQueries() {
 		logger.info("============================================================================================");
-		logger.info("======================= populatingRelationshipsFromMultipleQueries =========================");
+		logger.info("=== populating relationships using multiple queries ==========================================");
 		logger.info("============================================================================================");
 
 		// first query
