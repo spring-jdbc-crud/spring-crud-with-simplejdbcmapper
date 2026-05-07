@@ -164,7 +164,9 @@ public class DemoService {
 		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity),
 				0);
 
+		// populate() method triggers the processing of the relationship
 		relationshipMapper.type(OrderLine.class).toOne(Product.class).joinOn("productId", "id").populate("product");
+		// populate() process the relationship and getList() returns the list
 		List<Order> orders = relationshipMapper.type(Order.class).toMany(OrderLine.class).joinOn("id", "orderId")
 				.populate("orderLines").getList(Order.class);
 
@@ -193,6 +195,7 @@ public class DemoService {
 
 		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity));
 
+		// using toMany() with through()
 		List<Employee> employees = relationshipMapper.type(Employee.class).toMany(Skill.class)
 				.through(EmployeeSkill.class, "employeeId", "skillId").populate("skills").getList(Employee.class);
 
@@ -228,7 +231,8 @@ public class DemoService {
 		// duplicate product ids we are fine.
 		List<Product> products = sjm.findByPropertyValues(Product.class, "id", productIdList);
 
-		// add products to the relationship mapper
+		// add products to the relationshipmapper so that we can build a relationship
+		// from it.
 		relationshipMapper.addEntityResult(Product.class, products, "id");
 
 		// The toOne relationship populates orderLine.product.
