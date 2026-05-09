@@ -13,6 +13,7 @@ import io.github.simplejdbcmapper.annotation.Table;
 public class Order {
 	@Id(type = IdType.AUTO_GENERATED)
 	private Integer id;
+
 	@Column
 	private LocalDateTime orderDate;
 

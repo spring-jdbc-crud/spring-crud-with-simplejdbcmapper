@@ -13,6 +13,7 @@ public class EmployeeSkill {
 
 	@Column
 	private Integer employeeId;
+
 	@Column
 	private Integer skillId;
 
