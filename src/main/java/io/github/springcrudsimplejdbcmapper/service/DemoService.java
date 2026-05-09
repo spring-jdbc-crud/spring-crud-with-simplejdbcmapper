@@ -265,4 +265,49 @@ public class DemoService {
 		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(orders));
 	}
 
+	public void populatingRelationshipsFromMultipleQueries2() {
+		logger.info("============================================================================================");
+		logger.info("=== populating relationships using multiple queries ==========================================");
+		logger.info("============================================================================================");
+
+		String orderSql = """
+				   SELECT %s
+				   FROM orders
+				   ORDER BY orders.id
+				   OFFSET %d ROWS FETCH NEXT %d ROWS ONLY
+				""".formatted(sjm.getEntitySqlColumns(Order.class), 0, 10);
+
+		// Using Spring's JdbcTemplate api for sql above
+		List<Order> orders = sjm.getJdbcTemplate().query(orderSql, sjm.newEntityRowMapper(Order.class));
+
+		// get the order id list
+		List<Integer> orderIdList = orders.stream().map(Order::getId).toList();
+
+		// 2nd query
+		MultiEntity multiEntity = new MultiEntity().add(OrderLine.class, "ol").add(Product.class, "p");
+		String sql = """
+				   SELECT %s
+				   FROM order_line ol
+				   LEFT JOIN product p ON ol.product_id = p.id
+				   WHER ol.order_id IN (?)
+				   ORDER BY ol.id
+				""".formatted(sjm.getMultiEntitySqlColumns(multiEntity));
+
+		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity),
+				orderIdList);
+
+		// add orders to the relationshipmapper so that we can build a relationship
+		// from it.
+		relationshipMapper.addEntityResult(Order.class, orders, "id");
+
+		// The toOne relationship populates orderLine.product.
+		relationshipMapper.type(OrderLine.class).toOne(Product.class).joinOn("productId", "id").populate("product");
+
+		// The toMany relationship populates order.orderLines
+		orders = relationshipMapper.type(Order.class).toMany(OrderLine.class).joinOn("id", "orderId")
+				.populate("orderLines").getList(Order.class);
+
+		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(orders));
+	}
+
 }
