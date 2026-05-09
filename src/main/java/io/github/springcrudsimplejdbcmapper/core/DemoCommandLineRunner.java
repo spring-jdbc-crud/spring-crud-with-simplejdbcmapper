@@ -29,7 +29,7 @@ public class DemoCommandLineRunner implements CommandLineRunner {
 
 		demoService.toManyThroughAnIntermediateTable();
 
-		demoService.populatingRelationshipsFromMultipleQueries2();
+		demoService.populatingRelationshipsFromMultipleQueries();
 
 	}
 }
