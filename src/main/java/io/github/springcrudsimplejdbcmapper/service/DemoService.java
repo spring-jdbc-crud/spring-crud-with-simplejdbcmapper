@@ -115,13 +115,21 @@ public class DemoService {
 
 	}
 
-	public List<Order> toManyRelationship() {
+	public void toManyRelationship() {
 		logger.info("============================================================================================");
 		logger.info("======================= Relationshp: Order toMany OrderLine  ===============================");
 		logger.info("============================================================================================");
 
+		// Define the multiple mapped entities you want to select. Make sure the table
+		// aliases match that in query.
+		// Mapped Class | Table |Alias
+		// ------------------------------------
+		// Order.class | orders | "o"
+		// OrderLine.class | order_line | "ol"
 		MultiEntity multiEntity = new MultiEntity().add(Order.class, "o").add(OrderLine.class, "ol");
 
+		// Get the columns for your 'SELECT' using getMultiEntitySqlColumns().
+		// Using java String blocks makes the queries more readable.
 		String sql = """
 				SELECT %s
 				FROM orders o
@@ -130,18 +138,20 @@ public class DemoService {
 				ORDER BY o.id, ol.id
 				""".formatted(sjm.getMultiEntitySqlColumns(multiEntity));
 
+		// Use the framework ResultSetExtractor with JdbcTemplate to extract the
+		// results.
 		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity),
 				0);
-
+		// populate() does the processing and populates Order.orderLines and getList()
+		// returns the orders
 		List<Order> orders = relationshipMapper.type(Order.class).toMany(OrderLine.class).joinOn("id", "orderId")
 				.populate("orderLines").getList(Order.class);
 
 		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(orders));
 
-		return orders;
 	}
 
-	public List<Order> multipleRelationshipsToOneToManyWithSingleQuery() {
+	public void multipleRelationshipsToOneToManyWithSingleQuery() {
 		logger.info(
 				"==============================================================================================================");
 		logger.info(
@@ -149,9 +159,13 @@ public class DemoService {
 		logger.info(
 				"==============================================================================================================");
 
+		// define your entities. The aliases should exactly match the aliases used in
+		// the query.
 		MultiEntity multiEntity = new MultiEntity().add(Order.class, "o").add(OrderLine.class, "ol").add(Product.class,
 				"p");
 
+		// build your custom sql using the columns sql from
+		// sjm.getMultiEntitySqlColumns(multiEntity)
 		String sql = """
 				SELECT %s
 				FROM orders o
@@ -161,29 +175,34 @@ public class DemoService {
 				ORDER BY o.id, ol.id
 				""".formatted(sjm.getMultiEntitySqlColumns(multiEntity));
 
+		// Use JdbcTemplate with the framework extractor to execute the query and
+		// extract results
 		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity),
 				0);
 
 		// populate() method triggers the processing of the relationship
 		relationshipMapper.type(OrderLine.class).toOne(Product.class).joinOn("productId", "id").populate("product");
+
 		// populate() process the relationship and getList() returns the list
 		List<Order> orders = relationshipMapper.type(Order.class).toMany(OrderLine.class).joinOn("id", "orderId")
 				.populate("orderLines").getList(Order.class);
 
 		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(orders));
 
-		return orders;
-
 	}
 
-	public List<Employee> toManyThroughAnIntermediateTable() {
+	public void toManyThroughAnIntermediateTable() {
 		logger.info("============================================================================================");
 		logger.info("=== Relationship: Employee toMany Skill through intermediate table employee_skill ==========");
 		logger.info("============================================================================================");
 
+		// Define the entities. The intermediate table employe_skill (in this case
+		// corresponds to EmpolyeeSkill class) needs to be selected also.
 		MultiEntity multiEntity = new MultiEntity().add(Employee.class, "emp").add(EmployeeSkill.class, "es")
 				.add(Skill.class, "s");
 
+		// build your custom sql using the columns sql from
+		// sjm.getMultiEntitySqlColumns(multiEntity)
 		String sql = """
 				SELECT %s
 				FROM employee emp
@@ -193,18 +212,19 @@ public class DemoService {
 				ORDER BY emp.id, s.name
 				""".formatted(sjm.getMultiEntitySqlColumns(multiEntity));
 
+		// Use JdbcTemplate with the framework extractor to extract results for the
+		// entities.
 		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity));
 
-		// using toMany() with through()
+		// populate employee.skills property. Here we are using toMany() with through().
 		List<Employee> employees = relationshipMapper.type(Employee.class).toMany(Skill.class)
 				.through(EmployeeSkill.class, "employeeId", "skillId").populate("skills").getList(Employee.class);
 
 		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(employees));
 
-		return employees;
 	}
 
-	public List<Order> populatingRelationshipsFromMultipleQueries() {
+	public void populatingRelationshipsFromMultipleQueries() {
 		logger.info("============================================================================================");
 		logger.info("=== populating relationships using multiple queries ==========================================");
 		logger.info("============================================================================================");
@@ -243,7 +263,6 @@ public class DemoService {
 				.populate("orderLines").getList(Order.class);
 
 		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(orders));
-		return orders;
 	}
 
 }
