@@ -141,15 +141,17 @@ public class DemoService {
 				""".formatted(sjm.getMultiEntitySqlColumns(multiEntity));
 
 		// Use the framework ResultSetExtractor with JdbcTemplate to extract the
-		// results.
+		// results. RelationshipMapper holds the query results
 		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity),
 				0);
 
-		// define the relationship. Note Relationships can be reused with different
+		// define the relationship. Note Relationship is thread safe and can be used
+		// with different
 		// query results which have the same relationship.
 		Relationship orderToManyOrderLine = Relationship.type(Order.class).toMany(OrderLine.class)
 				.joinOn("id", "orderId").populate("orderLines");
 
+		// Assemble the relationship and getList() returns the orders
 		List<Order> orders = relationshipMapper.assemble(orderToManyOrderLine).getList(Order.class);
 
 		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(orders));
@@ -164,7 +166,7 @@ public class DemoService {
 		logger.info(
 				"==============================================================================================================");
 
-		// define your entities. The aliases should exactly match the aliases used in
+		// Define your entities. The aliases should exactly match the aliases used in
 		// the query.
 		MultiEntity multiEntity = new MultiEntity().add(Order.class, "o").add(OrderLine.class, "ol").add(Product.class,
 				"p");
@@ -185,13 +187,16 @@ public class DemoService {
 		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity),
 				0);
 
-		Relationship ordLineToOneProduct = Relationship.type(OrderLine.class).toOne(Product.class)
+		// Define the toOne relationship between OrderLine and Product
+		Relationship orderLineToOneProduct = Relationship.type(OrderLine.class).toOne(Product.class)
 				.joinOn("productId", "id").populate("product");
 
+		// Define the toMany relationship between Order and OrderLine
 		Relationship orderToManyOrderLine = Relationship.type(Order.class).toMany(OrderLine.class)
 				.joinOn("id", "orderId").populate("orderLines");
 
-		List<Order> orders = relationshipMapper.assemble(ordLineToOneProduct, orderToManyOrderLine)
+		// Assemble the relationships and getList() returns the orders
+		List<Order> orders = relationshipMapper.assemble(orderLineToOneProduct, orderToManyOrderLine)
 				.getList(Order.class);
 
 		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(orders));
@@ -223,10 +228,13 @@ public class DemoService {
 		// entities.
 		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity));
 
-		Relationship empToManySkillThrough = Relationship.type(Employee.class).toMany(Skill.class)
+		// Define the toMany relationship between Employee and Skill through
+		// intermediate class EmployeeSkill
+		Relationship employeeToManySkillThrough = Relationship.type(Employee.class).toMany(Skill.class)
 				.through(EmployeeSkill.class, "employeeId", "skillId").populate("skills");
 
-		List<Employee> employees = relationshipMapper.assemble(empToManySkillThrough).getList(Employee.class);
+		// Assemble the relationship and getList() returns the employees
+		List<Employee> employees = relationshipMapper.assemble(employeeToManySkillThrough).getList(Employee.class);
 
 		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(employees));
 
@@ -266,17 +274,20 @@ public class DemoService {
 		RelationshipMapper relationshipMapper = sjm.getNamedParameterJdbcTemplate().query(sql, param,
 				sjm.resultSetExtractor(multiEntity));
 
-		// add orders to the relationshipmapper so that we can build a relationship
+		// add orders to the relationshipMapper so that we can build a relationship
 		// from it.
 		relationshipMapper.addEntityResult(Order.class, orders, "id");
 
-		Relationship ordLineToOneProduct = Relationship.type(OrderLine.class).toOne(Product.class)
+		// Define the toOne relationship between OrderLine and Product
+		Relationship orderLineToOneProduct = Relationship.type(OrderLine.class).toOne(Product.class)
 				.joinOn("productId", "id").populate("product");
 
+		// Define the toMany relationship between Order and OrderLine
 		Relationship orderToManyOrderLine = Relationship.type(Order.class).toMany(OrderLine.class)
 				.joinOn("id", "orderId").populate("orderLines");
 
-		orders = relationshipMapper.assemble(ordLineToOneProduct, orderToManyOrderLine).getList(Order.class);
+		// Assemble the relationships and getList() returns the orders
+		orders = relationshipMapper.assemble(orderLineToOneProduct, orderToManyOrderLine).getList(Order.class);
 
 		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(orders));
 	}
