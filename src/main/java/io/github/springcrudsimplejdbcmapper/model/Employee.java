@@ -15,6 +15,7 @@ public class Employee {
 
 	@Column
 	private String lastName;
+
 	@Column
 	private String firstName;
 

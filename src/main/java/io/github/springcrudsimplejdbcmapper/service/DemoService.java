@@ -62,7 +62,7 @@ public class DemoService {
 		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(p));
 
 		logger.info("============================================================================================");
-		logger.info("========updateSpecificProperties in this case 'cost' property only ==========================");
+		logger.info("======== updateSpecificProperties in this case 'cost' property only ==========================");
 		logger.info("============================================================================================");
 
 		p.setCost(11.99);
