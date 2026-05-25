@@ -244,15 +244,16 @@ public class DemoService {
 		logger.info("=== populating relationships using multiple queries ==========================================");
 		logger.info("============================================================================================");
 
+		// Since its a single entity use getEntitySqlColumns() to get the sql columns
 		String orderSql = """
 				   SELECT %s
 				   FROM orders
 				   ORDER BY orders.id
-				   OFFSET %d ROWS FETCH NEXT %d ROWS ONLY
-				""".formatted(sjm.getEntitySqlColumns(Order.class), 0, 10);
+				   OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+				""".formatted(sjm.getEntitySqlColumns(Order.class));
 
-		// Using Spring's JdbcTemplate api for sql above
-		List<Order> orders = sjm.getJdbcTemplate().query(orderSql, sjm.newEntityRowMapper(Order.class));
+		// For a single entity use EntityRowMapper with JdbcTemplate to get the results.
+		List<Order> orders = sjm.getJdbcTemplate().query(orderSql, sjm.newEntityRowMapper(Order.class), 0, 10);
 
 		// get the order id list
 		List<Integer> orderIdList = orders.stream().map(Order::getId).toList();
