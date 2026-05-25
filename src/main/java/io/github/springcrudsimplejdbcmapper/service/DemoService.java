@@ -146,8 +146,7 @@ public class DemoService {
 				0);
 
 		// define the relationship. Note Relationship is thread safe and can be used
-		// with different
-		// query results which have the same relationship.
+		// with different query results which have the same relationship.
 		Relationship orderToManyOrderLine = Relationship.type(Order.class).toMany(OrderLine.class)
 				.joinOn("id", "orderId").populate("orderLines");
 
