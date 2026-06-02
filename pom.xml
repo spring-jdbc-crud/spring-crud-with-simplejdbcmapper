@@ -20,10 +20,6 @@
     </description>
 	<packaging>jar</packaging>
 
-	<properties>
-		<java.version>21</java.version>
-	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>io.github.spring-jdbc-crud</groupId>
