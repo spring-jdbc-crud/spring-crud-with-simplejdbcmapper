@@ -103,15 +103,15 @@ public class DemoService {
 		logger.info("============================================================================================");
 
 		/*
-		 * For custom queries use getEntitySqlColumns() to get the columns sql and use
-		 * it with EntityRowMapper. EntityRowMapper is the recommended row mapper for
+		 * For custom queries use geSqlColumns() to get the columns sql and use it with
+		 * EntityRowMapper. EntityRowMapper is the recommended row mapper for
 		 * SimpleJdbcMapper Note in this case the 'name' property is mapped to the
 		 * 'product_name' column.
 		 */
-		String sql = "SELECT " + sjm.getEntitySqlColumns(Product.class) + " FROM product WHERE sku = ? ";
+		String sql = "SELECT " + sjm.getSqlColumns(Product.class) + " FROM product WHERE sku = ? ";
 
 		// Using Spring's JdbcTemplate api for sql above
-		List<Product> products = sjm.getJdbcTemplate().query(sql, sjm.newEntityRowMapper(Product.class), "sku#1001");
+		List<Product> products = sjm.getJdbcTemplate().query(sql, sjm.entityRowMapper(Product.class), "sku#1001");
 
 		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(products));
 
@@ -130,7 +130,7 @@ public class DemoService {
 		// OrderLine.class | order_line | "ol"
 		MultiEntity multiEntity = new MultiEntity().add(Order.class, "o").add(OrderLine.class, "ol");
 
-		// Get the columns for your 'SELECT' using getMultiEntitySqlColumns().
+		// Get the columns for your 'SELECT' using getSqlColumns().
 		// Using java String blocks makes the queries more readable.
 		String sql = """
 				SELECT %s
@@ -138,7 +138,7 @@ public class DemoService {
 				LEFT JOIN order_line ol ON  o.id = ol.order_id
 				WHERE o.total_amount >= ?
 				ORDER BY o.id, ol.id
-				""".formatted(sjm.getMultiEntitySqlColumns(multiEntity));
+				""".formatted(sjm.getSqlColumns(multiEntity));
 
 		// Use the framework ResultSetExtractor with JdbcTemplate to extract the
 		// results. RelationshipMapper holds the query results
@@ -171,7 +171,7 @@ public class DemoService {
 				"p");
 
 		// build your custom sql using the columns sql from
-		// sjm.getMultiEntitySqlColumns(multiEntity)
+		// sjm.getSqlColumns(multiEntity)
 		String sql = """
 				SELECT %s
 				FROM orders o
@@ -179,7 +179,7 @@ public class DemoService {
 				LEFT JOIN product p ON ol.product_id = p.id
 				WHERE o.total_amount >= ?
 				ORDER BY o.id, ol.id
-				""".formatted(sjm.getMultiEntitySqlColumns(multiEntity));
+				""".formatted(sjm.getSqlColumns(multiEntity));
 
 		// Use JdbcTemplate with the framework extractor to execute the query and
 		// extract results
@@ -213,7 +213,7 @@ public class DemoService {
 				.add(Skill.class, "s");
 
 		// build your custom sql using the columns sql from
-		// sjm.getMultiEntitySqlColumns(multiEntity)
+		// sjm.getSqlColumns(multiEntity)
 		String sql = """
 				SELECT %s
 				FROM employee emp
@@ -221,7 +221,7 @@ public class DemoService {
 				LEFT JOIN skill s ON es.skill_id = s.id
 				WHERE emp.id <= 4
 				ORDER BY emp.id, s.name
-				""".formatted(sjm.getMultiEntitySqlColumns(multiEntity));
+				""".formatted(sjm.getSqlColumns(multiEntity));
 
 		// Use JdbcTemplate with the framework extractor to extract results for the
 		// entities.
@@ -244,16 +244,16 @@ public class DemoService {
 		logger.info("=== populating relationships using multiple queries ==========================================");
 		logger.info("============================================================================================");
 
-		// Since its a single entity use getEntitySqlColumns() to get the sql columns
+		// Since its a single entity use getSqlColumns() to get the sql columns
 		String orderSql = """
 				   SELECT %s
 				   FROM orders
 				   ORDER BY orders.id
 				   OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
-				""".formatted(sjm.getEntitySqlColumns(Order.class));
+				""".formatted(sjm.getSqlColumns(Order.class));
 
 		// For a single entity use EntityRowMapper with JdbcTemplate to get the results.
-		List<Order> orders = sjm.getJdbcTemplate().query(orderSql, sjm.newEntityRowMapper(Order.class), 0, 10);
+		List<Order> orders = sjm.getJdbcTemplate().query(orderSql, sjm.entityRowMapper(Order.class), 0, 10);
 
 		// get the order id list
 		List<Integer> orderIdList = orders.stream().map(Order::getId).toList();
@@ -266,7 +266,7 @@ public class DemoService {
 				   LEFT JOIN product p ON ol.product_id = p.id
 				   WHERE ol.order_id IN (:orderIdList)
 				   ORDER BY ol.id
-				""".formatted(sjm.getMultiEntitySqlColumns(multiEntity));
+				""".formatted(sjm.getSqlColumns(multiEntity));
 
 		MapSqlParameterSource param = new MapSqlParameterSource().addValue("orderIdList", orderIdList);
 		// Since the query has a named parameter we are using NamedParameterJdbcTemplate
