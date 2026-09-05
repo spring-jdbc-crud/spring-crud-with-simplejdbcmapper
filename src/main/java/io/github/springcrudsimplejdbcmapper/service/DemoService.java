@@ -105,7 +105,7 @@ public class DemoService {
 		/*
 		 * For custom queries use geSqlColumns() to get the columns sql and use it with
 		 * EntityRowMapper. EntityRowMapper is the recommended row mapper for
-		 * SimpleJdbcMapper Note in this case the 'name' property is mapped to the
+		 * SimpleJdbcMapper. Note in this case the 'name' property is mapped to the
 		 * 'product_name' column.
 		 */
 		String sql = "SELECT " + sjm.getSqlColumns(Product.class) + " FROM product WHERE sku = ? ";
@@ -140,12 +140,13 @@ public class DemoService {
 				ORDER BY o.id, ol.id
 				""".formatted(sjm.getSqlColumns(multiEntity));
 
-		// Use the framework ResultSetExtractor with JdbcTemplate to extract the
+		// Use the library ResultSetExtractor with JdbcTemplate to extract the
 		// results. RelationshipMapper holds the query results
 		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity),
 				0);
 
-		// define the relationship. Note Relationship is thread safe and can be used
+		// define the relationship. Note that Relationship is thread safe and so it can
+		// be used
 		// with different query results which have the same relationship.
 		Relationship orderToManyOrderLine = Relationship.type(Order.class).toMany(OrderLine.class)
 				.joinOn("id", "orderId").populate("orderLines");
@@ -181,7 +182,7 @@ public class DemoService {
 				ORDER BY o.id, ol.id
 				""".formatted(sjm.getSqlColumns(multiEntity));
 
-		// Use JdbcTemplate with the framework extractor to execute the query and
+		// Use JdbcTemplate with the library extractor to execute the query and
 		// extract results
 		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity),
 				0);
@@ -223,7 +224,7 @@ public class DemoService {
 				ORDER BY emp.id, s.name
 				""".formatted(sjm.getSqlColumns(multiEntity));
 
-		// Use JdbcTemplate with the framework extractor to extract results for the
+		// Use JdbcTemplate with the library extractor to extract results for the
 		// entities.
 		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity));
 
@@ -244,7 +245,6 @@ public class DemoService {
 		logger.info("=== populating relationships using multiple queries ==========================================");
 		logger.info("============================================================================================");
 
-		// Since its a single entity use getSqlColumns() to get the sql columns
 		String orderSql = """
 				   SELECT %s
 				   FROM orders
