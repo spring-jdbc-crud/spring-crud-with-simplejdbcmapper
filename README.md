@@ -1,5 +1,5 @@
 # The demo application for SimpleJdbcMapper
-This is a demo application for [SimpleJdbcMapper](https://github.com/spring-jdbc-crud/simplejdbcmapper), a library that simplifies Spring JdbcTemplate/JdbcClient CRUD operations by making them less verbose 
+This is a demo application for [SimpleJdbcMapper](https://github.com/spring-jdbc-crud/simplejdbcmapper), a library that simplifies Spring JdbcTemplate/JdbcClient CRUD operations and relationship queries by making them less verbose.
 
 
 The application requires **java21+**.
