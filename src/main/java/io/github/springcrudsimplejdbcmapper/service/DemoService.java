@@ -206,8 +206,8 @@ public class DemoService {
 		logger.info("=== Relationship: Employee toMany Skill through intermediate table employee_skill ==========");
 		logger.info("============================================================================================");
 
-		// Define the entities. The intermediate table employe_skill (in this case
-		// corresponds to EmpolyeeSkill class) needs to be selected also.
+		// Define the entities. The intermediate table employe_skill in this case
+		// corresponds to EmpolyeeSkill class needs to be selected also.
 		MultiEntity multiEntity = new MultiEntity().add(Employee.class, "emp").add(EmployeeSkill.class, "es")
 				.add(Skill.class, "s");
 
