@@ -124,7 +124,7 @@ public class DemoService {
 
 		// Define the multiple mapped entities you want to select. Make sure the table
 		// aliases match that in query.
-		// Mapped Class | Table |Alias
+		// Mapped Class | Table | Alias
 		// ------------------------------------
 		// Order.class | orders | "o"
 		// OrderLine.class | order_line | "ol"
@@ -146,8 +146,7 @@ public class DemoService {
 				0);
 
 		// define the relationship. Note that Relationship is thread safe and so it can
-		// be used
-		// with different query results which have the same relationship.
+		// be used with different query results which have the same relationship.
 		Relationship orderToManyOrderLine = Relationship.type(Order.class).toMany(OrderLine.class)
 				.joinOn("id", "orderId").populate("orderLines");
 
@@ -171,8 +170,7 @@ public class DemoService {
 		MultiEntity multiEntity = new MultiEntity().add(Order.class, "o").add(OrderLine.class, "ol").add(Product.class,
 				"p");
 
-		// build your custom sql using the columns sql from
-		// sjm.getSqlColumns(multiEntity)
+		// Get the columns for your 'SELECT' using getSqlColumns().
 		String sql = """
 				SELECT %s
 				FROM orders o
@@ -213,8 +211,7 @@ public class DemoService {
 		MultiEntity multiEntity = new MultiEntity().add(Employee.class, "emp").add(EmployeeSkill.class, "es")
 				.add(Skill.class, "s");
 
-		// build your custom sql using the columns sql from
-		// sjm.getSqlColumns(multiEntity)
+		// Get the columns for your 'SELECT' using getSqlColumns().
 		String sql = """
 				SELECT %s
 				FROM employee emp
