@@ -146,7 +146,7 @@ public class DemoService {
 				0);
 
 		// define the relationship. Note that Relationship is thread safe and so it can
-		// be used with different query results which have the same relationship.
+		// be reused with different query results which have the same relationship.
 		Relationship orderToManyOrderLine = Relationship.type(Order.class).toMany(OrderLine.class)
 				.joinOn("id", "orderId").populate("orderLines");
 
@@ -255,8 +255,11 @@ public class DemoService {
 		// get the order id list
 		List<Integer> orderIdList = orders.stream().map(Order::getId).toList();
 
-		// 2nd query. For IN clauses we have to use a named parameter
+		// Define entities for 2nd query. The aliases should exactly match the aliases
+		// used in the query.
 		MultiEntity multiEntity = new MultiEntity().add(OrderLine.class, "ol").add(Product.class, "p");
+
+		// 2nd query. For IN clauses we have to use a named parameter
 		String sql = """
 				   SELECT %s
 				   FROM order_line ol
@@ -265,13 +268,17 @@ public class DemoService {
 				   ORDER BY ol.id
 				""".formatted(sjm.getSqlColumns(multiEntity));
 
+		// Create the named parameter for NamedParameterJdbcTemplate
 		MapSqlParameterSource param = new MapSqlParameterSource().addValue("orderIdList", orderIdList);
-		// Since the query has a named parameter we are using NamedParameterJdbcTemplate
+
+		// Since the query has a named parameter we need to use
+		// NamedParameterJdbcTemplate
 		// for this query
 		RelationshipMapper relationshipMapper = sjm.getNamedParameterJdbcTemplate().query(sql, param,
 				sjm.resultSetExtractor(multiEntity));
 
-		// add orders to the relationshipMapper so that we can build a relationship
+		// relationshipMapper has results of OrderLine and Product from query above.
+		// Add orders to the relationshipMapper so that we can build a relationship
 		// from it.
 		relationshipMapper.addEntityResult(Order.class, orders, "id");
 
