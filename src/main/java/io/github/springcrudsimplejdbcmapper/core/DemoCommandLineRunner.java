@@ -19,8 +19,6 @@ public class DemoCommandLineRunner implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		demoService.crud();
 
-		demoService.findByProperty();
-
 		demoService.customQueriesForSingleEntity();
 
 		demoService.toManyRelationship();

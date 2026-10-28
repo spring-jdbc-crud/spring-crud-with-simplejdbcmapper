@@ -1,6 +1,5 @@
 package io.github.springcrudsimplejdbcmapper.service;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import io.github.simplejdbcmapper.core.MultiEntity;
 import io.github.simplejdbcmapper.core.SimpleJdbcMapper;
-import io.github.simplejdbcmapper.core.SortBy;
 import io.github.simplejdbcmapper.relationship.Relationship;
 import io.github.simplejdbcmapper.relationship.RelationshipMapper;
 import io.github.springcrudsimplejdbcmapper.model.Employee;
@@ -66,35 +64,10 @@ public class DemoService {
 		logger.info("============================================================================================");
 
 		p.setCost(11.99);
-		// sql update will be issued only for cost field.
+		// sql update will be issued only for cost field. It can handle more than one
+		// property
 		sjm.updateSpecificProperties(p, "cost");
 		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(p));
-
-		logger.info("============================================================================================");
-		logger.info("======================= findAll with Sort            =======================================");
-		logger.info("============================================================================================");
-
-		// Using SortBy to generate the "ORDER BY" clause. Use it similarly with method
-		// signatures which have varargs SortBy
-		List<Product> products = sjm.findAll(Product.class, new SortBy("cost", "DESC"), new SortBy("name"));
-		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(products));
-	}
-
-	public void findByProperty() {
-		logger.info("============================================================================================");
-		logger.info("======================= findByPropertyValue()        =======================================");
-		logger.info("============================================================================================");
-
-		List<Product> products = sjm.findByPropertyValue(Product.class, "sku", "sku#1001");
-		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(products));
-
-		logger.info("============================================================================================");
-		logger.info("======================= findByPropertyValues()        ======================================");
-		logger.info("============================================================================================");
-
-		String[] skus = { "sku#1001", "sku#1002" };
-		List<Product> list = sjm.findByPropertyValues(Product.class, "sku", Arrays.asList(skus));
-		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(list));
 	}
 
 	public void customQueriesForSingleEntity() {
@@ -104,8 +77,7 @@ public class DemoService {
 
 		/*
 		 * For custom queries use geSqlColumns() to get the columns sql and use it with
-		 * EntityRowMapper. EntityRowMapper is the recommended row mapper for
-		 * SimpleJdbcMapper. Note in this case the 'name' property is mapped to the
+		 * EntityRowMapper. Note in this case the 'name' property is mapped to the
 		 * 'product_name' column.
 		 */
 		String sql = "SELECT " + sjm.getSqlColumns(Product.class) + " FROM product WHERE sku = ? ";
