@@ -31,7 +31,7 @@ public class DemoService {
 
 	public void crud() {
 		logger.info("============================================================================================");
-		logger.info("======================= insert =============================================================");
+		logger.info("====== insert ==============================================================================");
 		logger.info("============================================================================================");
 
 		Product p = new Product();
@@ -44,14 +44,14 @@ public class DemoService {
 		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(p));
 
 		logger.info("============================================================================================");
-		logger.info("======================= findById                     =======================================");
+		logger.info("====== findById ============================================================================");
 		logger.info("============================================================================================");
 
 		p = sjm.findById(Product.class, p.getId());
 		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(p));
 
 		logger.info("============================================================================================");
-		logger.info("======================= update                       =======================================");
+		logger.info("====== update ==============================================================================");
 		logger.info("============================================================================================");
 
 		p.setDescription("some other candy");
@@ -60,7 +60,7 @@ public class DemoService {
 		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(p));
 
 		logger.info("============================================================================================");
-		logger.info("======== updateSpecificProperties in this case 'cost' property only ==========================");
+		logger.info("====== updateSpecificProperties in this case 'cost' property only ==========================");
 		logger.info("============================================================================================");
 
 		p.setCost(11.99);
@@ -72,7 +72,7 @@ public class DemoService {
 
 	public void customQueriesForSingleEntity() {
 		logger.info("============================================================================================");
-		logger.info("=========== Custom query for a single entity         =======================================");
+		logger.info("====== Custom query for a single entity ====================================================");
 		logger.info("============================================================================================");
 
 		/*
@@ -91,7 +91,7 @@ public class DemoService {
 
 	public void toManyRelationship() {
 		logger.info("============================================================================================");
-		logger.info("======================= Relationshp: Order toMany OrderLine  ===============================");
+		logger.info("====== Relationshp: Order toMany OrderLine =================================================");
 		logger.info("============================================================================================");
 
 		// Define the multiple mapped entities you want to select. Make sure the table
@@ -131,11 +131,11 @@ public class DemoService {
 
 	public void multipleRelationshipsToOneToManyWithSingleQuery() {
 		logger.info(
-				"==============================================================================================================");
+				"=================================================================================================================");
 		logger.info(
-				"=== Populating multiple relationships with a single query. Order toMany OrderLine, OrderLine toOne Product ===");
+				"====== Populating multiple relationships with a single query. Order toMany OrderLine, OrderLine toOne Product ===");
 		logger.info(
-				"==============================================================================================================");
+				"=================================================================================================================");
 
 		// Define your entities. The aliases should exactly match the aliases used in
 		// the query.
@@ -175,7 +175,7 @@ public class DemoService {
 
 	public void toManyThroughAnIntermediateTable() {
 		logger.info("============================================================================================");
-		logger.info("=== Relationship: Employee toMany Skill through intermediate table employee_skill ==========");
+		logger.info("====== Relationship: Employee toMany Skill through intermediate table employee_skill =======");
 		logger.info("============================================================================================");
 
 		// Define the entities. The intermediate table employe_skill in this case
@@ -211,7 +211,7 @@ public class DemoService {
 
 	public void populatingRelationshipsFromMultipleQueries() {
 		logger.info("============================================================================================");
-		logger.info("=== populating relationships using multiple queries ==========================================");
+		logger.info("====== populating relationships using multiple queries =====================================");
 		logger.info("============================================================================================");
 
 		String orderSql = """
