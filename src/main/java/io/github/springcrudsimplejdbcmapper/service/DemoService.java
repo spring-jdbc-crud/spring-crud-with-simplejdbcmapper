@@ -79,6 +79,8 @@ public class DemoService {
 		 * For custom queries use geSqlColumns() to get the columns sql and use it with
 		 * EntityRowMapper. Note in this case the 'name' property is mapped to the
 		 * 'product_name' column.
+		 * 
+		 * ALWAYS use getSqlColumns() to get the columns for your 'SELECT'.
 		 */
 		String sql = "SELECT " + sjm.getSqlColumns(Product.class) + " FROM product WHERE sku = ? ";
 
@@ -102,7 +104,7 @@ public class DemoService {
 		// OrderLine.class | order_line | "ol"
 		MultiEntity multiEntity = new MultiEntity().add(Order.class, "o").add(OrderLine.class, "ol");
 
-		// Get the columns for your 'SELECT' using getSqlColumns().
+		// ALWAYS use getSqlColumns() to get the columns for your 'SELECT'.
 		// Using java String blocks makes the queries more readable.
 		String sql = """
 				SELECT %s
@@ -142,7 +144,7 @@ public class DemoService {
 		MultiEntity multiEntity = new MultiEntity().add(Order.class, "o").add(OrderLine.class, "ol").add(Product.class,
 				"p");
 
-		// Get the columns for your 'SELECT' using getSqlColumns().
+		// ALWAYS use getSqlColumns() to get the columns for your 'SELECT'.
 		String sql = """
 				SELECT %s
 				FROM orders o
@@ -183,7 +185,7 @@ public class DemoService {
 		MultiEntity multiEntity = new MultiEntity().add(Employee.class, "emp").add(EmployeeSkill.class, "es")
 				.add(Skill.class, "s");
 
-		// Get the columns for your 'SELECT' using getSqlColumns().
+		// ALWAYS use getSqlColumns() to get the columns for your 'SELECT'.
 		String sql = """
 				SELECT %s
 				FROM employee emp
