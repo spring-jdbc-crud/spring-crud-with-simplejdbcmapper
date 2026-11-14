@@ -119,8 +119,11 @@ public class DemoService {
 		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity),
 				0);
 
-		// define the relationship. Note that Relationship is thread safe and so it can
-		// be reused with different query results which have the same relationship.
+		// Define the relationship. A Relationship is thread safe so
+		// if you plan to use the same relationship for multiple query results,
+		// define it once as a 'static final' constant and use that constant where ever
+		// appropriate. In these examples relationships are defined as local variables
+		// for clarity.
 		Relationship orderToManyOrderLine = Relationship.type(Order.class).toMany(OrderLine.class)
 				.joinOn("id", "orderId").populate("orderLines");
 
