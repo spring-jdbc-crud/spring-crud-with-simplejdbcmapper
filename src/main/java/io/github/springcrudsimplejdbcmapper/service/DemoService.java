@@ -26,6 +26,16 @@ public class DemoService {
 	JsonMapper jsonMapper;
 	private static final Logger logger = LoggerFactory.getLogger(DemoService.class);
 
+	// Define the toMany relationship between Order and OrderLine. A Relationship is
+	// thread safe so we can use it where ever appropriate
+	private static final Relationship orderToManyOrderLine = Relationship.type(Order.class).toMany(OrderLine.class)
+			.joinOn("id", "orderId").populate("orderLines");
+
+	// Define the toOne relationship between OrderLine and Product. A Relationship
+	// is thread safe so we can use it where ever appropriate
+	private static final Relationship orderLineToOneProduct = Relationship.type(OrderLine.class).toOne(Product.class)
+			.joinOn("productId", "id").populate("product");
+
 	@Autowired
 	private SimpleJdbcMapper sjm;
 
@@ -119,13 +129,6 @@ public class DemoService {
 		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity),
 				0);
 
-		// Define the relationship. A Relationship is thread safe.
-		// Generally you would want to define it once (for example as a 'static final'
-		// constant variable) and use it where appropriate. In these examples
-		// relationships are defined as local variables for clarity.
-		Relationship orderToManyOrderLine = Relationship.type(Order.class).toMany(OrderLine.class)
-				.joinOn("id", "orderId").populate("orderLines");
-
 		// Assemble the relationship and getList() returns the orders
 		List<Order> orders = relationshipMapper.assemble(orderToManyOrderLine).getList(Order.class);
 
@@ -141,8 +144,8 @@ public class DemoService {
 		logger.info(
 				"=================================================================================================================");
 
-		// Define your entities. The aliases should exactly match the aliases used in
-		// the query.
+		// Define the multiple mapped entities you want to select. The aliases should
+		// exactly match the aliases used in the query.
 		MultiEntity multiEntity = new MultiEntity().add(Order.class, "o").add(OrderLine.class, "ol").add(Product.class,
 				"p");
 
@@ -160,14 +163,6 @@ public class DemoService {
 		// extract results
 		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity),
 				0);
-
-		// Define the toOne relationship between OrderLine and Product
-		Relationship orderLineToOneProduct = Relationship.type(OrderLine.class).toOne(Product.class)
-				.joinOn("productId", "id").populate("product");
-
-		// Define the toMany relationship between Order and OrderLine
-		Relationship orderToManyOrderLine = Relationship.type(Order.class).toMany(OrderLine.class)
-				.joinOn("id", "orderId").populate("orderLines");
 
 		// Assemble the relationships and getList() returns the orders
 		List<Order> orders = relationshipMapper.assemble(orderLineToOneProduct, orderToManyOrderLine)
@@ -248,8 +243,7 @@ public class DemoService {
 		MapSqlParameterSource param = new MapSqlParameterSource().addValue("orderIdList", orderIdList);
 
 		// Since the query has a named parameter we need to use
-		// NamedParameterJdbcTemplate
-		// for this query
+		// NamedParameterJdbcTemplate for this query
 		RelationshipMapper relationshipMapper = sjm.getNamedParameterJdbcTemplate().query(sql, param,
 				sjm.resultSetExtractor(multiEntity));
 
@@ -257,14 +251,6 @@ public class DemoService {
 		// Add orders to the relationshipMapper so that we can build a relationship
 		// from it.
 		relationshipMapper.addEntityResult(Order.class, orders, "id");
-
-		// Define the toOne relationship between OrderLine and Product
-		Relationship orderLineToOneProduct = Relationship.type(OrderLine.class).toOne(Product.class)
-				.joinOn("productId", "id").populate("product");
-
-		// Define the toMany relationship between Order and OrderLine
-		Relationship orderToManyOrderLine = Relationship.type(Order.class).toMany(OrderLine.class)
-				.joinOn("id", "orderId").populate("orderLines");
 
 		// Assemble the relationships and getList() returns the orders
 		orders = relationshipMapper.assemble(orderLineToOneProduct, orderToManyOrderLine).getList(Order.class);
