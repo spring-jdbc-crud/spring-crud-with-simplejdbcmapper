@@ -124,8 +124,8 @@ public class DemoService {
 				ORDER BY o.id, ol.id
 				""".formatted(sjm.getSqlColumns(multiEntity));
 
-		// Use the library ResultSetExtractor with JdbcTemplate to extract the
-		// results. RelationshipMapper holds the query results
+		// Use JdbcTemplate with the library's ResultSetExtractor to execute the query.
+		// RelationshipMapper holds the query results.
 		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity),
 				0);
 
@@ -159,8 +159,8 @@ public class DemoService {
 				ORDER BY o.id, ol.id
 				""".formatted(sjm.getSqlColumns(multiEntity));
 
-		// Use JdbcTemplate with the library extractor to execute the query and
-		// extract results
+		// Use JdbcTemplate with the library's ResultSetExtractor to execute the query.
+		// RelationshipMapper holds the query results.
 		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity),
 				0);
 
@@ -192,8 +192,8 @@ public class DemoService {
 				ORDER BY emp.id, s.name
 				""".formatted(sjm.getSqlColumns(multiEntity));
 
-		// Use JdbcTemplate with the library extractor to extract results for the
-		// entities.
+		// Use JdbcTemplate with the library's ResultSetExtractor to execute the query.
+		// RelationshipMapper holds the query results.
 		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity));
 
 		// Define the toMany relationship between Employee and Skill through
