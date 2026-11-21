@@ -103,7 +103,8 @@ public class DemoService {
 
 	public void toManyRelationship() {
 		logger.info("============================================================================================");
-		logger.info("====== Relationshp: Order toMany OrderLine =================================================");
+		logger.info(
+				"====== Assembling a relationship: Order toMany OrderLine =================================================");
 		logger.info("============================================================================================");
 
 		// Define the multiple mapped entities you want to select. Make sure the table
@@ -140,7 +141,7 @@ public class DemoService {
 		logger.info(
 				"=================================================================================================================");
 		logger.info(
-				"====== Populating multiple relationships with a single query. Order toMany OrderLine, OrderLine toOne Product ===");
+				"====== Assembling multiple relationships from a single query. Order toMany OrderLine, OrderLine toOne Product ===");
 		logger.info(
 				"=================================================================================================================");
 
@@ -210,7 +211,7 @@ public class DemoService {
 
 	public void populatingRelationshipsFromMultipleQueries() {
 		logger.info("============================================================================================");
-		logger.info("====== populating relationships using multiple queries =====================================");
+		logger.info("====== Assembling relationships using multiple queries =====================================");
 		logger.info("============================================================================================");
 
 		String orderSql = """
