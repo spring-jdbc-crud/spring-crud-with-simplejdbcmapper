@@ -22,241 +22,278 @@ import tools.jackson.databind.json.JsonMapper;
 
 @Service
 public class DemoService {
-	@Autowired
-	JsonMapper jsonMapper;
-	private static final Logger logger = LoggerFactory.getLogger(DemoService.class);
+  @Autowired JsonMapper jsonMapper;
+  private static final Logger logger = LoggerFactory.getLogger(DemoService.class);
 
-	// Define the toMany relationship between Order and OrderLine. A Relationship is
-	// thread safe so we can use it where ever appropriate
-	private static final Relationship orderToManyOrderLine = Relationship.type(Order.class).toMany(OrderLine.class)
-			.joinOn("id", "orderId").populate("orderLines");
+  // Define the toMany relationship between Order and OrderLine. A Relationship is
+  // thread safe so we can use it where ever appropriate
+  private static final Relationship orderToManyOrderLine =
+      Relationship.type(Order.class)
+          .toMany(OrderLine.class)
+          .joinOn("id", "orderId")
+          .populate("orderLines");
 
-	// Define the toOne relationship between OrderLine and Product. A Relationship
-	// is thread safe so we can use it where ever appropriate
-	private static final Relationship orderLineToOneProduct = Relationship.type(OrderLine.class).toOne(Product.class)
-			.joinOn("productId", "id").populate("product");
+  // Define the toOne relationship between OrderLine and Product. A Relationship
+  // is thread safe so we can use it where ever appropriate
+  private static final Relationship orderLineToOneProduct =
+      Relationship.type(OrderLine.class)
+          .toOne(Product.class)
+          .joinOn("productId", "id")
+          .populate("product");
 
-	@Autowired
-	private SimpleJdbcMapper sjm;
+  @Autowired private SimpleJdbcMapper sjm;
 
-	public void crud() {
-		logger.info("============================================================================================");
-		logger.info("====== insert ==============================================================================");
-		logger.info("============================================================================================");
+  public void crud() {
+    logger.info(
+        "============================================================================================");
+    logger.info(
+        "====== insert ==============================================================================");
+    logger.info(
+        "============================================================================================");
 
-		Product p = new Product();
-		p.setSku("sku-2001");
-		p.setCost(9.25);
-		p.setDescription("some candy");
-		p.setName("candy");
-		// auto assigns id on insert since id configured as auto generated
-		sjm.insert(p);
-		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(p));
+    Product p = new Product();
+    p.setSku("sku-2001");
+    p.setCost(9.25);
+    p.setDescription("some candy");
+    p.setName("candy");
+    // auto assigns id on insert since id configured as auto generated
+    sjm.insert(p);
+    logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(p));
 
-		logger.info("============================================================================================");
-		logger.info("====== findById ============================================================================");
-		logger.info("============================================================================================");
+    logger.info(
+        "============================================================================================");
+    logger.info(
+        "====== findById ============================================================================");
+    logger.info(
+        "============================================================================================");
 
-		p = sjm.findById(Product.class, p.getId());
-		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(p));
+    p = sjm.findById(Product.class, p.getId());
+    logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(p));
 
-		logger.info("============================================================================================");
-		logger.info("====== update ==============================================================================");
-		logger.info("============================================================================================");
+    logger.info(
+        "============================================================================================");
+    logger.info(
+        "====== update ==============================================================================");
+    logger.info(
+        "============================================================================================");
 
-		p.setDescription("some other candy");
-		// issues an update for the full object
-		sjm.update(p);
-		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(p));
+    p.setDescription("some other candy");
+    // issues an update for the full object
+    sjm.update(p);
+    logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(p));
 
-		logger.info("============================================================================================");
-		logger.info("====== updateSpecificProperties in this case 'cost' property only ==========================");
-		logger.info("============================================================================================");
+    logger.info(
+        "============================================================================================");
+    logger.info(
+        "====== updateSpecificProperties in this case 'cost' property only ==========================");
+    logger.info(
+        "============================================================================================");
 
-		p.setCost(11.99);
-		// sql update will be issued only for cost field. It can handle more than one
-		// property
-		sjm.updateSpecificProperties(p, "cost");
-		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(p));
-	}
+    p.setCost(11.99);
+    // sql update will be issued only for cost field. It can handle more than one
+    // property
+    sjm.updateSpecificProperties(p, "cost");
+    logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(p));
+  }
 
-	public void customQueriesForSingleEntity() {
-		logger.info("============================================================================================");
-		logger.info("====== Custom query for a single entity ====================================================");
-		logger.info("============================================================================================");
+  public void customQueriesForSingleEntity() {
+    logger.info(
+        "============================================================================================");
+    logger.info(
+        "====== Custom query for a single entity ====================================================");
+    logger.info(
+        "============================================================================================");
 
-		/*
-		 * For custom queries use geSqlColumns() to get the columns sql and use it with
-		 * EntityRowMapper. Note in this case the 'name' property is mapped to the
-		 * 'product_name' column.
-		 * 
-		 * ALWAYS use getSqlColumns() to get the columns for your 'SELECT'.
-		 */
-		String sql = "SELECT " + sjm.getSqlColumns(Product.class) + " FROM product WHERE sku = ? ";
+    String sql = sjm.select(Product.class).clauses("FROM product WHERE sku = ?");
+    // Using Spring's JdbcTemplate api for sql above
+    List<Product> products =
+        sjm.getJdbcTemplate().query(sql, sjm.entityRowMapper(Product.class), "sku#1001");
 
-		// Using Spring's JdbcTemplate api for sql above
-		List<Product> products = sjm.getJdbcTemplate().query(sql, sjm.entityRowMapper(Product.class), "sku#1001");
+    logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(products));
+  }
 
-		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(products));
+  public void toManyRelationship() {
+    logger.info(
+        "============================================================================================");
+    logger.info(
+        "====== Assembling a relationship: Order toMany OrderLine =================================================");
+    logger.info(
+        "============================================================================================");
 
-	}
+    // Define the multiple mapped entities you want to select. Make sure the table
+    // aliases match that in query.
+    // Mapped Class | Table | Alias
+    // ------------------------------------
+    // Order.class | orders | "o"
+    // OrderLine.class | order_line | "ol"
+    MultiEntity multiEntity = new MultiEntity().add(Order.class, "o").add(OrderLine.class, "ol");
 
-	public void toManyRelationship() {
-		logger.info("============================================================================================");
-		logger.info(
-				"====== Assembling a relationship: Order toMany OrderLine =================================================");
-		logger.info("============================================================================================");
+    // Using java text blocks for the clauses makes the queries more readable.
+    String sql =
+        sjm.select(multiEntity)
+            .clauses(
+                """
+                  FROM orders o
+                  LEFT JOIN order_line ol ON  o.id = ol.order_id
+                  WHERE o.total_amount >= ?
+                  ORDER BY o.id, ol.id
+                """);
 
-		// Define the multiple mapped entities you want to select. Make sure the table
-		// aliases match that in query.
-		// Mapped Class | Table | Alias
-		// ------------------------------------
-		// Order.class | orders | "o"
-		// OrderLine.class | order_line | "ol"
-		MultiEntity multiEntity = new MultiEntity().add(Order.class, "o").add(OrderLine.class, "ol");
+    // Use JdbcTemplate with the library's ResultSetExtractor to execute the query.
+    // RelationshipMapper holds the query results.
+    RelationshipMapper relationshipMapper =
+        sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity), 0);
 
-		// ALWAYS use getSqlColumns() to get the columns for your 'SELECT'.
-		// Using java String blocks makes the queries more readable.
-		String sql = """
-				SELECT %s
-				FROM orders o
-				LEFT JOIN order_line ol ON  o.id = ol.order_id
-				WHERE o.total_amount >= ?
-				ORDER BY o.id, ol.id
-				""".formatted(sjm.getSqlColumns(multiEntity));
+    // Assemble the relationship and getList() returns the orders
+    List<Order> orders = relationshipMapper.assemble(orderToManyOrderLine).getList(Order.class);
 
-		// Use JdbcTemplate with the library's ResultSetExtractor to execute the query.
-		// RelationshipMapper holds the query results.
-		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity),
-				0);
+    logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(orders));
+  }
 
-		// Assemble the relationship and getList() returns the orders
-		List<Order> orders = relationshipMapper.assemble(orderToManyOrderLine).getList(Order.class);
+  public void multipleRelationshipsToOneToManyWithSingleQuery() {
+    logger.info(
+        "=================================================================================================================");
+    logger.info(
+        "====== Assembling multiple relationships from a single query. Order toMany OrderLine, OrderLine toOne Product ===");
+    logger.info(
+        "=================================================================================================================");
 
-		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(orders));
+    // Define the multiple mapped entities you want to select. The aliases should
+    // exactly match the aliases used in the query.
+    MultiEntity multiEntity =
+        new MultiEntity().add(Order.class, "o").add(OrderLine.class, "ol").add(Product.class, "p");
 
-	}
+    // Using java text blocks for the clauses makes the queries more readable.
+    String sql =
+        sjm.select(multiEntity)
+            .clauses(
+                """
+                  FROM orders o
+                  LEFT JOIN order_line ol ON  o.id = ol.order_id
+                  LEFT JOIN product p ON ol.product_id = p.id
+                  WHERE o.total_amount >= ?
+                  ORDER BY o.id, ol.id
+                """);
 
-	public void multipleRelationshipsToOneToManyWithSingleQuery() {
-		logger.info(
-				"=================================================================================================================");
-		logger.info(
-				"====== Assembling multiple relationships from a single query. Order toMany OrderLine, OrderLine toOne Product ===");
-		logger.info(
-				"=================================================================================================================");
+    // Use JdbcTemplate with the library's ResultSetExtractor to execute the query.
+    // RelationshipMapper holds the query results.
+    RelationshipMapper relationshipMapper =
+        sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity), 0);
 
-		// Define the multiple mapped entities you want to select. The aliases should
-		// exactly match the aliases used in the query.
-		MultiEntity multiEntity = new MultiEntity().add(Order.class, "o").add(OrderLine.class, "ol").add(Product.class,
-				"p");
+    // Assemble the relationships and getList() returns the orders
+    List<Order> orders =
+        relationshipMapper
+            .assemble(orderLineToOneProduct, orderToManyOrderLine)
+            .getList(Order.class);
 
-		// ALWAYS use getSqlColumns() to get the columns for your 'SELECT'.
-		String sql = """
-				SELECT %s
-				FROM orders o
-				LEFT JOIN order_line ol ON  o.id = ol.order_id
-				LEFT JOIN product p ON ol.product_id = p.id
-				WHERE o.total_amount >= ?
-				ORDER BY o.id, ol.id
-				""".formatted(sjm.getSqlColumns(multiEntity));
+    logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(orders));
+  }
 
-		// Use JdbcTemplate with the library's ResultSetExtractor to execute the query.
-		// RelationshipMapper holds the query results.
-		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity),
-				0);
+  public void toManyThroughAnIntermediateTable() {
+    logger.info(
+        "============================================================================================");
+    logger.info(
+        "====== Relationship: Employee toMany Skill through intermediate table employee_skill =======");
+    logger.info(
+        "============================================================================================");
 
-		// Assemble the relationships and getList() returns the orders
-		List<Order> orders = relationshipMapper.assemble(orderLineToOneProduct, orderToManyOrderLine)
-				.getList(Order.class);
+    // Define the entities. The intermediate table employe_skill in this case
+    // corresponds to EmpolyeeSkill class needs to be selected also.
+    MultiEntity multiEntity =
+        new MultiEntity()
+            .add(Employee.class, "emp")
+            .add(EmployeeSkill.class, "es")
+            .add(Skill.class, "s");
 
-		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(orders));
+    String sql =
+        sjm.select(multiEntity)
+            .clauses(
+                """
+                  FROM employee emp
+                  LEFT JOIN  employee_skill es ON emp.id = es.employee_id
+                  LEFT JOIN skill s ON es.skill_id = s.id
+                  WHERE emp.id <= 4
+                  ORDER BY emp.id, s.name
+                """);
 
-	}
+    // Use JdbcTemplate with the library's ResultSetExtractor to execute the query.
+    // RelationshipMapper holds the query results.
+    RelationshipMapper relationshipMapper =
+        sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity));
 
-	public void toManyThroughAnIntermediateTable() {
-		logger.info("============================================================================================");
-		logger.info("====== Relationship: Employee toMany Skill through intermediate table employee_skill =======");
-		logger.info("============================================================================================");
+    // Define the toMany relationship between Employee and Skill through
+    // intermediate class EmployeeSkill
+    Relationship employeeToManySkillThrough =
+        Relationship.type(Employee.class)
+            .toMany(Skill.class)
+            .through(EmployeeSkill.class, "employeeId", "skillId")
+            .populate("skills");
 
-		// Define the entities. The intermediate table employe_skill in this case
-		// corresponds to EmpolyeeSkill class needs to be selected also.
-		MultiEntity multiEntity = new MultiEntity().add(Employee.class, "emp").add(EmployeeSkill.class, "es")
-				.add(Skill.class, "s");
+    // Assemble the relationship and getList() returns the employees
+    List<Employee> employees =
+        relationshipMapper.assemble(employeeToManySkillThrough).getList(Employee.class);
 
-		// ALWAYS use getSqlColumns() to get the columns for your 'SELECT'.
-		String sql = """
-				SELECT %s
-				FROM employee emp
-				LEFT JOIN  employee_skill es ON emp.id = es.employee_id
-				LEFT JOIN skill s ON es.skill_id = s.id
-				WHERE emp.id <= 4
-				ORDER BY emp.id, s.name
-				""".formatted(sjm.getSqlColumns(multiEntity));
+    logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(employees));
+  }
 
-		// Use JdbcTemplate with the library's ResultSetExtractor to execute the query.
-		// RelationshipMapper holds the query results.
-		RelationshipMapper relationshipMapper = sjm.getJdbcTemplate().query(sql, sjm.resultSetExtractor(multiEntity));
+  public void populatingRelationshipsFromMultipleQueries() {
+    logger.info(
+        "============================================================================================");
+    logger.info(
+        "====== Assembling relationships using multiple queries =====================================");
+    logger.info(
+        "============================================================================================");
 
-		// Define the toMany relationship between Employee and Skill through
-		// intermediate class EmployeeSkill
-		Relationship employeeToManySkillThrough = Relationship.type(Employee.class).toMany(Skill.class)
-				.through(EmployeeSkill.class, "employeeId", "skillId").populate("skills");
+    String orderSql =
+        sjm.select(Order.class)
+            .clauses(
+                """
+                  FROM orders
+                  ORDER BY orders.id
+                  OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+                """);
 
-		// Assemble the relationship and getList() returns the employees
-		List<Employee> employees = relationshipMapper.assemble(employeeToManySkillThrough).getList(Employee.class);
+    // For a single entity use EntityRowMapper with JdbcTemplate to get the results.
+    List<Order> orders =
+        sjm.getJdbcTemplate().query(orderSql, sjm.entityRowMapper(Order.class), 0, 10);
 
-		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(employees));
+    // get the order id list
+    List<Integer> orderIdList = orders.stream().map(Order::getId).toList();
 
-	}
+    // Define entities for 2nd query. The aliases should exactly match the aliases
+    // used in the query.
+    MultiEntity multiEntity = new MultiEntity().add(OrderLine.class, "ol").add(Product.class, "p");
 
-	public void populatingRelationshipsFromMultipleQueries() {
-		logger.info("============================================================================================");
-		logger.info("====== Assembling relationships using multiple queries =====================================");
-		logger.info("============================================================================================");
+    // 2nd query. For IN clauses we have to use a named parameter
+    String sql =
+        sjm.select(multiEntity)
+            .clauses(
+                """
+                   FROM order_line ol
+                   LEFT JOIN product p ON ol.product_id = p.id
+                   WHERE ol.order_id IN (:orderIdList)
+                   ORDER BY ol.id
+                """);
 
-		String orderSql = """
-				   SELECT %s
-				   FROM orders
-				   ORDER BY orders.id
-				   OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
-				""".formatted(sjm.getSqlColumns(Order.class));
+    // Create the named parameter for NamedParameterJdbcTemplate
+    MapSqlParameterSource param = new MapSqlParameterSource().addValue("orderIdList", orderIdList);
 
-		// For a single entity use EntityRowMapper with JdbcTemplate to get the results.
-		List<Order> orders = sjm.getJdbcTemplate().query(orderSql, sjm.entityRowMapper(Order.class), 0, 10);
+    // Since the query has a named parameter we need to use
+    // NamedParameterJdbcTemplate for this query
+    RelationshipMapper relationshipMapper =
+        sjm.getNamedParameterJdbcTemplate().query(sql, param, sjm.resultSetExtractor(multiEntity));
 
-		// get the order id list
-		List<Integer> orderIdList = orders.stream().map(Order::getId).toList();
+    // relationshipMapper has results of OrderLine and Product from query above.
+    // Add orders to the relationshipMapper so that we can build a relationship
+    // from it.
+    relationshipMapper.addEntityResult(Order.class, orders, "id");
 
-		// Define entities for 2nd query. The aliases should exactly match the aliases
-		// used in the query.
-		MultiEntity multiEntity = new MultiEntity().add(OrderLine.class, "ol").add(Product.class, "p");
+    // Assemble the relationships and getList() returns the orders
+    orders =
+        relationshipMapper
+            .assemble(orderLineToOneProduct, orderToManyOrderLine)
+            .getList(Order.class);
 
-		// 2nd query. For IN clauses we have to use a named parameter
-		String sql = """
-				   SELECT %s
-				   FROM order_line ol
-				   LEFT JOIN product p ON ol.product_id = p.id
-				   WHERE ol.order_id IN (:orderIdList)
-				   ORDER BY ol.id
-				""".formatted(sjm.getSqlColumns(multiEntity));
-
-		// Create the named parameter for NamedParameterJdbcTemplate
-		MapSqlParameterSource param = new MapSqlParameterSource().addValue("orderIdList", orderIdList);
-
-		// Since the query has a named parameter we need to use
-		// NamedParameterJdbcTemplate for this query
-		RelationshipMapper relationshipMapper = sjm.getNamedParameterJdbcTemplate().query(sql, param,
-				sjm.resultSetExtractor(multiEntity));
-
-		// relationshipMapper has results of OrderLine and Product from query above.
-		// Add orders to the relationshipMapper so that we can build a relationship
-		// from it.
-		relationshipMapper.addEntityResult(Order.class, orders, "id");
-
-		// Assemble the relationships and getList() returns the orders
-		orders = relationshipMapper.assemble(orderLineToOneProduct, orderToManyOrderLine).getList(Order.class);
-
-		logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(orders));
-	}
-
+    logger.info(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(orders));
+  }
 }
